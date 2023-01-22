@@ -1,22 +1,29 @@
 #include <Arduino.h>
-#include<Servo.h>
+#include <Servo.h>
+#include <SoftwareSerial.h> 
 #include "Proxy.h" //file.h del sonar
 #include "Led.h"
-#include "Auto.h"
+#include "Autom.h"
 #include "Manual.h"
 #include "Potentiometer.h"
-#include "StandBy.h"
 #include "Timer.h"
 #include "Task.h"
 #include "Scheduler.h"
 
+SoftwareSerial MyBlue(2, 3); // RX | TX
 Servo engine;
+extern bool autoState;
+extern bool manualState;
+extern char man;
 Timer     timer;
 Scheduler sched;
 
 
 void setup() {
   Serial.begin(9600);
+  MyBlue.begin(9600);
+  
+  engine.attach(SERVO);
 
   timer.setupPeriod(50);
 
@@ -34,7 +41,8 @@ void setup() {
     delay(1000);
   }
 
-  standByState  = true;
+  autoState  = true;
+  manualState = false;
 
   delay(50);
 

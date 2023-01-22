@@ -4,6 +4,7 @@
 #include "Task.h"
 #include "Led.h"
 #include "Proxy.h"
+#include "Potentiometer.h"
 
 class Manual:public Task{
 
