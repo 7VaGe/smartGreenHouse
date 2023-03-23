@@ -21,15 +21,15 @@ void Manual::tick(){
     autoState=false;
     if(sonar->getDistance()>DIST){
       manualState  = false;
-      autoState  = false;
+      autoState  = true;
       this->led2->switchOff();
       this->led1->switchOn();
     }
     U = pot->getValue();
-    MyBlue.println(U);
-    if(MyBlue.available()){
-      msg = MyBlue.read();
-      engine.write(msg);
+     msgBT.sendMsg(Msg(U));
+    if(msgBT.isMsgAvailable()){
+      Msg* msg = msgBT.receiveMsg();
+      engine.write(msg->getContent());
     }
   }
 }

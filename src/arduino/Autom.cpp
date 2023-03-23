@@ -21,27 +21,33 @@ void Autom::tick(){
     U = pot->getValue();
     Serial.println(U);
     int p=0;
-    if(MyBlue.available()){
-       msg = MyBlue.read();
+    if(msgBT.isMsgAvailable()){
+       Msg* msg = msgBT.receiveMsg();
     }
-    if (sonar->getDistance()<DIST && msg == 'm'){
-       manualState  = true;
-       autoState = false;
-       this->led1->switchOff();
-       this->led2->switchOn();
+    if (sonar->getDistance()<DIST && msg->getContent() == 'm'){
+      Serial.read()=='0'
+      manualState  = true;
+      autoState = false;
+      this->led1->switchOff();
+      this->led2->switchOn();
+    }
+    switch(Serial.read()){
+      case 0:
+        Serial.println("chiusa");
+        break;
+      case 1:
+        engine.write(Pmin);
+        Serial.println("aperta con portata minima");
+        break;
+      case 2:
+        engine.write(Pmed);
+        Serial.println("aperta con portata media");
+        break;
+      case 3:
+        engine.write(Pmax);
+        Serial.println("aperta con portata massima");
+        break;
       }
-    if(Serial.read()=='0'){
-      engine.write('0');
-    }
-    if(Serial.read()=='1'){
-      engine.write(Pmin);
-    }
-    if(Serial.read()=='2'){
-      engine.write(Pmed);
-    }
-    if(Serial.read()=='3'){
-      engine.write(Pmax);
-    }
     /*if(U >= 20 && U =< 30){
       p=1;
     }

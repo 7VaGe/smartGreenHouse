@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <Servo.h>
-#include <SoftwareSerial.h> 
+#include "MsgServiceBT.h"
+#include "SoftwareSerial.h"
 #include "Proxy.h" //file.h del sonar
 #include "Led.h"
 #include "Autom.h"
@@ -10,7 +11,7 @@
 #include "Task.h"
 #include "Scheduler.h"
 
-SoftwareSerial MyBlue(2, 3); // RX | TX
+MsgServiceBT msgBT(2,3); // RX | TX
 Servo engine;
 extern bool autoState;
 extern bool manualState;
@@ -20,8 +21,8 @@ Scheduler sched;
 
 
 void setup() {
+  msgBT.init();  
   Serial.begin(9600);
-  MyBlue.begin(9600);
   
   engine.attach(SERVO);
 
