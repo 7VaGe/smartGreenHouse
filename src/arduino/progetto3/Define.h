@@ -1,4 +1,5 @@
-#include "Arduino.h"
+#ifndef __DEFINE__
+#define __DEFINE__
 
 #define DIST 3 //Accensione tramite Sonar (distanza 0,3m)
 #define Umin 30
@@ -11,6 +12,8 @@
 #define TRIG 7
 #define ECHO 8
 #define POT A3
-#define LD1 4
-#define LD2 3
-#define LDm 2
+#define LED1 4
+#define LED2 3
+#define LEDm 2
+
+#endif

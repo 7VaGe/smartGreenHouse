@@ -12,4 +12,9 @@ void Led::switchOn(){
 
 void Led::switchOff(){
   digitalWrite(pin,LOW);
-};
+}
+
+void Led::setIntensity(int val){
+   analogWrite(pin,val);   
+}
+;

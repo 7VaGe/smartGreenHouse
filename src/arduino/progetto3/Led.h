@@ -5,7 +5,8 @@ class Led{
 public:
   Led(int pin);
   void switchOn();
-  void switchOff();    
+  void switchOff();
+  void setIntensity(int val);    
 protected:
   int pin;  
 };
