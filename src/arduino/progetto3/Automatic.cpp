@@ -4,7 +4,7 @@
 #include "Sonar.h"
 #include "CanaleCom.h"
 
-Automatic::Automatic(Led* ledAuto, Led* ledPump, Sonar* proxy, CanaleServer* canale){
+Automatic::Automatic(Led* ledAuto, Led* ledPump, Sonar* proxy, CanaleCom* canale){
   this->ledAuto = ledAuto;
   this->ledPump = ledPump;
   this->proxy = proxy;
@@ -22,22 +22,27 @@ void Automatic::tick(){
     if(messaggio=="b" && proxy->getDistance()<30){
       Serial.println("b");
     }
-    switch(Serial.read()){
+    int apertura = canale->getValPump();
+    switch(apertura){
       case 4:
         Serial.println("chiusa");
         this->ledPump->switchOff();
+        //Pump.write(0);
         break;
       case 3:
         Serial.println("aperta con portata minima");
         this->ledPump->setIntensity(Pmin);
+        //Pump.write(Pmin);
         break;
       case 2:
         Serial.println("aperta con portata media");
         this->ledPump->setIntensity(Pmid);
+        //Pump.write(Pmid);
         break;
       case 1:
         Serial.println("aperta con portata massima");
         this->ledPump->switchOn();
+        //Pump.write(Pmax);
         break;
    }
 };

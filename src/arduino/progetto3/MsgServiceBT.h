@@ -3,19 +3,7 @@
 
 #include "Arduino.h"
 #include "SoftwareSerial.h"
-
-class Msg {
-  String content;
-
-public:
-  Msg(const String& content){
-    this->content = content;
-  }
-  
-  String getContent(){
-    return content;
-  }
-};
+#include "MsgService.h"
 
 class MsgServiceBT {
     
@@ -32,5 +20,7 @@ private:
   SoftwareSerial* channel;
   
 };
+
+extern MsgServiceBT MsgBT;
 
 #endif

@@ -9,9 +9,9 @@ public:
   void sendUmidityBT(int val);
   void sendState(int val);
 
-  int getMsgBT();
+  int getAndSendMsgBT();
   int getMsg();
-
+  int getValPump();
 };
 
 #endif
