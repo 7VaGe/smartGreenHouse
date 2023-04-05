@@ -28,6 +28,10 @@ int CanaleCom::getAndSendMsgBT() {
    }
 };
 
+void sendMessaggio(String val){
+  MsgService.sendMsg(val);
+};
+
 int CanaleCom::getMsg(){
    Msg* msg = MsgService.receiveMsg();
    if(msg!= NULL){
@@ -48,4 +52,17 @@ int CanaleCom::getValPump(){
    } else {
      return -1;
    }
+};
+
+int CanaleCom::getStatePump(){
+   Msg* msg = MsgService.receiveMsg();
+   if(msg!= NULL){
+    String comunicazione = msg->getContent();
+    comunicazione = comunicazione.substring(0,3);
+    if(comunicazione == "BWO"){
+    return 1;
+   } else {
+     return 0;
+   }
+ }
 };

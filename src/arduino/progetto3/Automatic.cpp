@@ -18,7 +18,7 @@ void Automatic::init(int period){
 };
 
 void Automatic::tick(){
-    char messaggio = canale->getMsg();
+    char messaggio = canale->getMsg(); //blue
     if(messaggio=="b" && proxy->getDistance()<30){
       Serial.println("b");
     }
@@ -27,7 +27,7 @@ void Automatic::tick(){
       case 4:
         Serial.println("chiusa");
         this->ledPump->switchOff();
-        //Pump.write(0);
+        //Pump.write(0); da risolvere il problema del servo
         break;
       case 3:
         Serial.println("aperta con portata minima");
@@ -37,7 +37,7 @@ void Automatic::tick(){
       case 2:
         Serial.println("aperta con portata media");
         this->ledPump->setIntensity(Pmid);
-        //Pump.write(Pmid);
+        //Pump.write(Pmid); da risolvere il problema del servo
         break;
       case 1:
         Serial.println("aperta con portata massima");

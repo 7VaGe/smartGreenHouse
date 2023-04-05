@@ -18,10 +18,8 @@ void ManualState::init(int period){
 
 void ManualState::tick(){
     int messaggio = canale->getAndSendMsgBT(); //blueT
-    if(messaggio == "e" || proxy->getDistance()<30){
+    if(messaggio == "e" || proxy->getDistance()>30){
       Serial.println("a");
-    }else{
-      Serial.println(messaggio);
     }
     int apertura = canale->getValPump();
     this->ledPump->setIntensity(apertura);

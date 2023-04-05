@@ -16,11 +16,11 @@ Scheduler sched;
 
 MsgServiceBT MsgBT(2,3);
 
-//Servo Pump;
+//Servo Pompa;
 
 void setup(){
   sched.init(50);
-  //Pump.attach(SERVO);
+  //Pompa.attach(SERVO);
   MsgBT.init();
   MsgService.init();
   CanaleCom* canale = new CanaleCom();
