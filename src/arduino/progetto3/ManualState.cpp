@@ -2,7 +2,7 @@
 #include "Define.h"
 #include "MsgService.h"
 
-ManualState::ManualState(Led* ledManual, Led* ledPump, Sonar* proxy, CanaleServer* canale){
+ManualState::ManualState(Led* ledManual, Led* ledPump, Sonar* proxy, CanaleCom* canale){
   this->ledManual = ledManual;
   this->ledPump = ledPump;
   this->proxy = proxy;
@@ -17,10 +17,11 @@ void ManualState::init(int period){
 }
 
 void ManualState::tick(){
-    int messaggio = canale->getMsg(); //blueT
-    if(messaggio == "e" || proxy->getDistance()<30){
+    int messaggio = canale->getAndSendMsgBT(); //blueT
+    if(messaggio == "e" || proxy->getDistance()>30){
       Serial.println("a");
     }
-    int azione = canale->getMsg();
-    this->ledPump->setIntensity(azione);
+    int apertura = canale->getValPump();
+    this->ledPump->setIntensity(apertura);
+    //Pump.write(apertura);
 }

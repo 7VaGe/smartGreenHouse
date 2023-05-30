@@ -13,7 +13,7 @@ void CanaleServer::sendState(int val){
   }
 };
 
-int CanaleServer::getMsg() {
+int CanaleServer::getMsg(){
    Msg* msg = MsgService.receiveMsg();
    if(msg!= NULL){
      return msg;

@@ -9,15 +9,21 @@
 #include "Scheduler.h"
 #include "CanaleCom.h"
 #include "CanaleServer.h"
-
+#include "MsgServiceBT.h"
+//#include <Servo.h>
 
 Scheduler sched;
 
-void setup() {
-  sched.init(50);
+MsgServiceBT MsgBT(2,3);
 
+//Servo Pompa;
+
+void setup(){
+  sched.init(50);
+  //Pompa.attach(SERVO);
+  MsgBT.init();
   MsgService.init();
-  CanaleServer* canale = new CanaleServer();
+  CanaleCom* canale = new CanaleCom();
 
   Sonar* proxy = new Sonar(ECHO, TRIG);
   Led* ledAuto = new Led(LED1);
