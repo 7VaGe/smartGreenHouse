@@ -15,6 +15,5 @@ void Led::switchOff(){
 }
 
 void Led::setIntensity(int val){
-   analogWrite(pin,val);   
-}
-;
+   digitalWrite(pin,val);
+};

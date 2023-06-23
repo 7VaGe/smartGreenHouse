@@ -32,12 +32,21 @@ void sendMessaggio(String val){
   MsgService.sendMsg(val);
 };
 
-int CanaleCom::getMsg(){
+String CanaleCom::getMsg(){
    Msg* msg = MsgService.receiveMsg();
    if(msg!= NULL){
-     return msg;
+     return msg->getContent();
    } else {
-     return -1;
+     return "niente";
+   }
+};
+
+String CanaleCom::getMsgBT(){
+   Msg* msg = MsgBT.receiveMsg();
+   if(msg!= NULL){
+     return msg->getContent();
+   } else {
+     return "niente";
    }
 };
 

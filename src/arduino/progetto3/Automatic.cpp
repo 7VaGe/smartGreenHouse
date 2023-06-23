@@ -3,12 +3,14 @@
 #include "MsgService.h"
 #include "Sonar.h"
 #include "CanaleCom.h"
+#include "PumpServo.h"
 
-Automatic::Automatic(Led* ledAuto, Led* ledPump, Sonar* proxy, CanaleCom* canale){
+Automatic::Automatic(Led* ledAuto, Led* ledPump, Sonar* proxy, CanaleCom* canale, PumpServo* Pump){
   this->ledAuto = ledAuto;
   this->ledPump = ledPump;
   this->proxy = proxy;
-  this->canale =canale;
+  this->canale = canale;
+  this->Pump = Pump;
 };
 
 void Automatic::init(int period){
@@ -18,7 +20,7 @@ void Automatic::init(int period){
 };
 
 void Automatic::tick(){
-    char messaggio = canale->getMsg(); //blue
+    String messaggio = canale->getMsgBT();
     if(messaggio=="b" && proxy->getDistance()<30){
       Serial.println("b");
     }
@@ -27,22 +29,22 @@ void Automatic::tick(){
       case 4:
         Serial.println("chiusa");
         this->ledPump->switchOff();
-        //Pump.write(0); da risolvere il problema del servo
+        Pump->setAngle(0);
         break;
       case 3:
         Serial.println("aperta con portata minima");
         this->ledPump->setIntensity(Pmin);
-        //Pump.write(Pmin);
+        Pump->setAngle(Pmin);
         break;
       case 2:
         Serial.println("aperta con portata media");
         this->ledPump->setIntensity(Pmid);
-        //Pump.write(Pmid); da risolvere il problema del servo
+        Pump->setAngle(Pmid);
         break;
       case 1:
         Serial.println("aperta con portata massima");
         this->ledPump->switchOn();
-        //Pump.write(Pmax);
+        Pump->setAngle(Pmax);
         break;
    }
 };

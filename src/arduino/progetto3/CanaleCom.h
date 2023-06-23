@@ -13,7 +13,8 @@ public:
   void sendMessaggio(String val);
   
   int getAndSendMsgBT();
-  int getMsg();
+  String getMsg();
+  String getMsgBT();
   int getValPump();
   int getStatePump();
 };
