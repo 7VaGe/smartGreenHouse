@@ -20,9 +20,11 @@ void Automatic::init(int period){
 };
 
 void Automatic::tick(){
+    this->ledAuto->switchOn();
     String messaggio = canale->getMsgBT();
     if(messaggio=="b" && proxy->getDistance()<30){
       Serial.println("b");
+      this->ledAuto->switchOff();
     }
     int apertura = canale->getValPump();
     switch(apertura){

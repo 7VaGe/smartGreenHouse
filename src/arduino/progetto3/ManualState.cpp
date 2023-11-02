@@ -18,11 +18,15 @@ void ManualState::init(int period){
 }
 
 void ManualState::tick(){
+    this->ledManual->switchOn();
     int messaggio = canale->getAndSendMsgBT(); //blueT
     if(messaggio == "e" || proxy->getDistance()>30){
       Serial.println("a");
+      this->ledManual->switchOff();
     }
-    int apertura = canale->getValPump();
-    this->ledPump->setIntensity(apertura);
-    Pump->setAngle(apertura);
+    if(canale->getMsg()!="niente"){
+      int apertura = canale->getValPump();
+      this->ledPump->setIntensity(apertura);
+      Pump->setAngle(apertura);
+    }
 }
