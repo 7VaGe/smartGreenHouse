@@ -4,7 +4,7 @@ import channel.SerialCommChannel;
 
 public class MsgService extends common.Observable {
 
-	private ExtendedSerialCommChannel channel;
+	private SerialCommChannel channel;
 	private String port;
 	private int rate;
 	
@@ -16,7 +16,7 @@ public class MsgService extends common.Observable {
 	
 	public void init(){
 		try {
-			channel = new ExtendedSerialCommChannel(port, rate);
+			channel = new SerialCommChannel(port, rate);
 			//channel = new SerialCommChannel(port, rate);	
 			System.out.println("Waiting Arduino for rebooting...");		
 			Thread.sleep(4000); //massimo per vertx 2000ms ora aggiungo un altro thread nella parte prima di inviare i msg
@@ -44,7 +44,7 @@ public class MsgService extends common.Observable {
 		try {
 			channel.close();
 			synchronized (channel) {
-				channel = new ExtendedSerialCommChannel(port, rate);
+				channel = new SerialCommChannel(port, rate);
 				channel.sendMsg(msg);
 				System.out.println("sent "+msg);
 				//close

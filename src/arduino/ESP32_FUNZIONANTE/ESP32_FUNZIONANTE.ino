@@ -18,14 +18,16 @@ void setup() {
     delay(500);
     Serial.print(".");
   } 
-  Serial.println("Connected: \n local IP: "+WiFi.localIP());
+  Serial.print("Connected: \n local IP: ");
+  Serial.println(WiFi.localIP());
   // put your setup code here, to run once:
 
 }
 int sendData(String address, float value, String place){  
-   HTTPClient http;    
+   HTTPClient http;       
    http.begin(address + "/api/data");      
-   http.addHeader("Content-Type", "application/json");     
+   http.addHeader("Content-Type", "application/json");
+       
    String msg = 
     String("{ \"value\": ") + String(value) + 
     ", \"place\": \"" + place +"\" }";
@@ -39,7 +41,7 @@ int sendData(String address, float value, String place){
 
 void loop() {
   if (WiFi.status()== WL_CONNECTED){   
-
+  
    /* read sensor */
    float value = (float) analogRead(A0) / 4092.0;
    
@@ -57,7 +59,5 @@ void loop() {
  } else { 
    Serial.println("Error in WiFi connection");   
  }
- 
  delay(5000);  
- 
 }

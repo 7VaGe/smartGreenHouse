@@ -2,9 +2,9 @@
 #include <HTTPClient.h>
 
 // Replace with your network credentials (STATION)
-const char* ssid = "TIM-30946425"; //inserisci ssis casa
-const char* password = "CasaCiarafoni00."; //relativa psw
-char* address = "http://192.168.1.7:8080";   //https://b036-79-26-139-8.eu.ngrok.io/
+const char* ssid = "FASTWEB-D66F8F"; //inserisci ssis casa
+const char* password = "A86JE9GJKF"; //relativa psw
+char* address = "http://192.168.1.184:8080";   //https://b036-79-26-139-8.eu.ngrok.io/
 
 
 void initWiFi() {

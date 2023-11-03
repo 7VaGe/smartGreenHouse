@@ -31,7 +31,7 @@ public class MainVerticle extends AbstractVerticle {
 	      // Handle every request using the router
 	      .requestHandler(router)
 	      // Start listening
-	      .listen(8888)
+	      .listen(8080)
 	      // Print the port
 	      .onSuccess(server ->
 	        System.out.println(

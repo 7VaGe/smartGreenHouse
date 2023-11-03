@@ -114,7 +114,7 @@ public class DataService extends AbstractVerticle {
 				}
 				System.out.println("Messaggio inviato");
 				
-			}else if((umidityPercentage > UMED)&& (umidityPercentage < UMAX)) {
+			}else if((umidityPercentage > UMED)&& (umidityPercentage < UMAX+DELTA)) {
 				System.out.println("Dovresti inviare 3");
 				try {
 					ma.sendMsgA("3");
@@ -122,7 +122,8 @@ public class DataService extends AbstractVerticle {
 					e.printStackTrace();
 				}
 				System.out.println("Messaggio inviato");
-			}else if((umidityPercentage > UMED)&& (umidityPercentage < UMAX +DELTA)) {
+			}else if(umidityPercentage > UMAX +DELTA) {
+				System.out.println("Dovresti inviare 4");
 				try {
 					ma.sendMsgA("4");
 				} catch (Exception e) {
