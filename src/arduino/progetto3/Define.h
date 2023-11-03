@@ -11,12 +11,11 @@
 #define DeltaU 5
 
 #define POMPA 9
-#define TRIG 7
-#define ECHO 8
-#define POT A3
-#define LED1 4
-#define LED2 3
-#define LEDm 2
+#define TRIG 12
+#define ECHO 13
+#define LED1 6
+#define LED2 7
+#define LEDm 5
 #define RX 0
 #define TX 0
 

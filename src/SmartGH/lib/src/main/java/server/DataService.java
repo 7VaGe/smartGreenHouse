@@ -25,7 +25,7 @@ public class DataService extends AbstractVerticle {
 	private int port;
 	private static final int MAX_SIZE = 10;//Numero massimo di rilevamenti.
 	private LinkedList<DataPoint> values;
-	private static final String PORT = "COM4"; //porta arduino
+	private static final String PORT = "COM3"; //porta arduino
 	private static int BAUD = 9600;
 	private static final double DELTA= 0.05;
 	private static final double UMIN = 0.10;

@@ -3,11 +3,11 @@
 
 
 /* wifi network name */
-const char* ssidName = "TIM-30946425"; //aggiunto const
+const char* ssidName = "FASTWEB-D66F8F"; //aggiunto const
 /* WPA2 PSK password */
- const char* pwd = "CasaCiarafoni00."; //aggiunto const
+ const char* pwd = "A86JE9GJKF"; //aggiunto const
 /* service IP address */ 
-char* address = "http://192.168.1.4:8080"; //controllare e 
+char* address = "http://192.168.1.184:8080"; //controllare e 
 
 void setup() {
   Serial.begin(115200);                                

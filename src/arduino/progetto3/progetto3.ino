@@ -14,7 +14,7 @@
 
 Scheduler sched;
 
-MsgServiceBT MsgBT(2,3);
+MsgServiceBT MsgBT(3,4);
 
 void setup(){
   sched.init(50);
