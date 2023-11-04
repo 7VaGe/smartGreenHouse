@@ -20,7 +20,6 @@ void Automatic::init(int period){
 };
 
 void Automatic::tick(){
-  if(zem=="a"){
     this->ledAuto->switchOn();
     String messaggio = canale->getMsgBT();
     if(messaggio=="b" && proxy->getDistance()<30){
@@ -50,5 +49,4 @@ void Automatic::tick(){
         Pump->setAngle(Pmax);
         break;
    }
-  }
 };
