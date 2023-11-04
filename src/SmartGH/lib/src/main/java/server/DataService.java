@@ -36,7 +36,7 @@ public class DataService extends AbstractVerticle {
 		values = new LinkedList<>();		
 		this.port = port;
 	}
-	MsgService ms= new MsgService(PORT, BAUD);
+	//MsgService ms= new MsgService(PORT, BAUD);
 	MyAgent ma= new MyAgent(PORT, BAUD);
 	
 	
@@ -90,6 +90,7 @@ public class DataService extends AbstractVerticle {
 			if (values.size() > MAX_SIZE) {
 				values.removeLast();
 			}
+			/*
 			//inserisci qui i dati da inviare nel canale seriale.
 			
 			//serve l'init per inviare i dati, però allo stesso tempo il thread dentro da problemi all'invio.	
@@ -130,6 +131,7 @@ public class DataService extends AbstractVerticle {
 					e.printStackTrace();
 				}
 			}
+			*/
 			log("New value: " + value + " from " + place + " on " + new Date(time));
 	        
 			response.setStatusCode(200).end();

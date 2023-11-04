@@ -3,6 +3,8 @@
 
 #include <Servo.h>;
 
+extern char zem = "a";
+
 #define DIST 3 //Accensione tramite Sonar (distanza 0,3m)
 #define Umin 30
 #define Pmin 60
