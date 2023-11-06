@@ -5,6 +5,9 @@
 #include "CanaleCom.h"
 #include "PumpServo.h"
 
+bool aState;
+extern bool mState;
+
 Automatic::Automatic(Led* ledAuto, Led* ledPump, Sonar* proxy, CanaleCom* canale, PumpServo* Pump){
   this->ledAuto = ledAuto;
   this->ledPump = ledPump;
@@ -20,11 +23,14 @@ void Automatic::init(int period){
 };
 
 void Automatic::tick(){
+  if(aState){
     this->ledAuto->switchOn();
     String messaggio = canale->getMsgBT();
     if(messaggio=="b" && proxy->getDistance()<30){
       Serial.println("b");
       this->ledAuto->switchOff();
+      mState=true;
+      aState=false;
     }
     int apertura = canale->getValPump();
     switch(apertura){
@@ -49,4 +55,5 @@ void Automatic::tick(){
         Pump->setAngle(Pmax);
         break;
    }
+  }
 };

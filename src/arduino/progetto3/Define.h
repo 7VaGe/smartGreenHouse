@@ -13,8 +13,8 @@
 #define POMPA 9
 #define TRIG 12
 #define ECHO 13
-#define LED1 6
-#define LED2 7
+#define LEDa 6
+#define LEDp 7
 #define LEDm 5
 #define RX 0
 #define TX 0
