@@ -18,9 +18,9 @@ public class MsgService extends common.Observable {
 		try {
 			channel = new SerialCommChannel(port, rate);
 			//channel = new SerialCommChannel(port, rate);	
-			System.out.println("Waiting Arduino for rebooting...");		
+			/*System.out.println("Waiting Arduino for rebooting...");		
 			Thread.sleep(4000); //massimo per vertx 2000ms ora aggiungo un altro thread nella parte prima di inviare i msg
-			System.out.println("Ready.");		
+			System.out.println("Ready.");	*/	
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

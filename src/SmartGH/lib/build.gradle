@@ -23,6 +23,7 @@ dependencies {
 	api 'io.vertx:vertx-web:4.0.0.CR2'
 	api 'io.vertx:vertx-web-client:4.0.0.CR2'
 	api 'io.vertx:vertx-mqtt:4.0.0.CR2'
+	api 'io.vertx:vertx-web:4.5.7'
 
     // This dependency is used internally, and not exposed to consumers on their own compile classpath.
     implementation 'com.google.guava:guava:28.2-jre'

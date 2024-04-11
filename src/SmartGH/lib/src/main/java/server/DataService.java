@@ -8,13 +8,17 @@ import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
+import io.vertx.ext.bridge.PermittedOptions;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
+import io.vertx.ext.web.handler.sockjs.SockJSBridgeOptions;
+import io.vertx.ext.web.handler.sockjs.SockJSHandler;
+
 import java.util.Date;
 import java.util.LinkedList;
 
-import handleMsg.MsgService;
+
 import handleMsg.MyAgent;
 
 /*
@@ -25,7 +29,7 @@ public class DataService extends AbstractVerticle {
 	private int port;
 	private static final int MAX_SIZE = 10;//Numero massimo di rilevamenti.
 	private LinkedList<DataPoint> values;
-	private static final String PORT = "COM3"; //porta arduino
+	private static final String PORT = "COM4"; //porta arduino
 	private static int BAUD = 9600;
 	private static final double DELTA= 0.05;
 	private static final double UMIN = 0.10;
@@ -39,7 +43,6 @@ public class DataService extends AbstractVerticle {
 	//MsgService ms= new MsgService(PORT, BAUD);
 	MyAgent ma= new MyAgent(PORT, BAUD);
 	
-	
 	public void start() {		
 		Router router = Router.router(vertx);
 		router.route().handler(BodyHandler.create());
@@ -52,22 +55,32 @@ public class DataService extends AbstractVerticle {
 			.requestHandler(router)
 			.listen(port);
 		router.route().failureHandler(this::handleFailure);
-		
+		SockJSHandler sockJSHandler = SockJSHandler.create(vertx);
+		SockJSBridgeOptions options = new SockJSBridgeOptions()
+                .addOutboundPermitted(new PermittedOptions().setAddress("dataUpdate"));
+        sockJSHandler.bridge(options);
+        
+        router.route("/eventbus/*").handler(sockJSHandler);
 		log("Service ready.");
-		//Devi controllare quando lanci il server di java a che indirizzo si inserisce
-		
+	
 		InetAddress ip;
-        String hostname;
         try {
-            ip = InetAddress.getLocalHost();
-            hostname = ip.getHostName();
+            ip = InetAddress.getLocalHost();         
             System.out.println("Your current IP address : " + ip); //l'indirizzo che mi serve da inseriere su arduino ide ESP
-            System.out.println("Your current Hostname : " + hostname);
+           // System.out.println("Your current Hostname : " + hostname);
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
 	}
 	
+	 private void updateData(long time, float value, String place) {
+	        JsonObject update = new JsonObject()
+	                .put("time",time)
+	                .put("value", value)
+	                .put("place", place);
+	        vertx.eventBus().publish("dataUpdate", update);
+	    }
+	 
 	private void handleFailure(RoutingContext routingContext) {
 		   routingContext.response()
 		     .putHeader("Content-type", "application/json; charset=utf-8")
@@ -78,7 +91,7 @@ public class DataService extends AbstractVerticle {
 	private void handleAddNewData(RoutingContext routingContext) {
 		HttpServerResponse response = routingContext.response();
 		// log("new mess "+routingContext.getBodyAsString());
-		JsonObject res =  routingContext.getBody().toJsonObject();
+		JsonObject res =  routingContext.body().asJsonObject();
 		if (res == null) {
 			sendError(400, response);
 		} else {
@@ -90,55 +103,12 @@ public class DataService extends AbstractVerticle {
 			if (values.size() > MAX_SIZE) {
 				values.removeLast();
 			}
-			/*
-			//inserisci qui i dati da inviare nel canale seriale.
-			
-			//serve l'init per inviare i dati, però allo stesso tempo il thread dentro da problemi all'invio.	
-	        log("Value: "+ value); //lo stampa ma non entra.
-	        float umidityPercentage = value;
-	        System.out.println("Valore dal potenziometro");
-			if (umidityPercentage<UMIN) {
-				System.out.println("Dovresti inviare 1");
-				try {
-					ma.sendMsgA("1");
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-				System.out.println("Messaggio inviato");
-			}else if((umidityPercentage > UMIN)&& (umidityPercentage < UMED)) {
-				System.out.println("Dovresti inviare 2");
-				try {
-										
-					ma.sendMsgA("2");
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-				System.out.println("Messaggio inviato");
-				
-			}else if((umidityPercentage > UMED)&& (umidityPercentage < UMAX+DELTA)) {
-				System.out.println("Dovresti inviare 3");
-				try {
-					ma.sendMsgA("3");
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-				System.out.println("Messaggio inviato");
-			}else if(umidityPercentage > UMAX +DELTA) {
-				System.out.println("Dovresti inviare 4");
-				try {
-					ma.sendMsgA("4");
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-			*/
-			log("New value: " + value + " from " + place + " on " + new Date(time));
-	        
+			updateData(time,value,place);
+			log("New value: " + value + " from " + place + " on " + new Date(time));        
 			response.setStatusCode(200).end();
 		}
 	}
 	
-
 	private void handleGetData(RoutingContext routingContext) {
 		JsonArray arr = new JsonArray();
 		for (DataPoint p: values) {
@@ -157,9 +127,6 @@ public class DataService extends AbstractVerticle {
 		response.setStatusCode(statusCode).end();
 	}
 
-	/*private void logFloat(float value) {
-		System.out.println("[DATA SERVICE] "+value);
-	}*/
 	private void log(String string) {
 		System.out.println("[DATA SERVICE] "+ string);
 	}
