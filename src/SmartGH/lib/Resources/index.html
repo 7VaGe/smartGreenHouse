@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-time Data Visualization</title>
+</head>
+<body>
+    <div id="data-container"></div>
+
+    <script>
+    // Funzione per aggiornare i dati tramite AJAX
+    function fetchData() {
+        // Effettua una richiesta GET al server per ottenere i dati
+        fetch('/api/data')
+            .then(response => {
+                // Controlla se la risposta è OK (status code 200)
+                if (response.ok) {
+                    // Estrai i dati dalla risposta JSON
+                    return response.json();
+                } else {
+                    // Se la risposta non è OK, solleva un errore
+                    throw new Error('Network response was not ok.');
+                }
+            })
+            .then(data => {
+                // Gestisci i dati ricevuti
+                updatePage(data);
+            })
+            .catch(error => {
+                // Gestisci eventuali errori durante la richiesta AJAX
+                console.error('There was a problem with the fetch operation:', error);
+            });
+    }
+
+    // Funzione per aggiornare la pagina con i nuovi dati
+    function updatePage(data) {
+        // Qui puoi aggiornare la pagina con i nuovi dati ricevuti dal server
+        // Ad esempio, aggiornare una tabella o una lista con i nuovi dati
+
+        // Esempio: Aggiorna un elemento div con i nuovi dati
+        const dataContainer = document.getElementById('data-container');
+        dataContainer.innerHTML = ''; // Cancella i dati precedenti
+        data.forEach(item => {
+            const newDataHtml = `
+                <p>New Data:</p>
+                <p>Time: ${new Date(item.time).toLocaleString()}</p>
+                <p>Value: ${item.value}</p>
+                <p>Place: ${item.place}</p>
+                <hr>
+            `;
+            dataContainer.innerHTML += newDataHtml;
+        });
+    }
+
+    // Esegui la funzione fetchData per ottenere i dati al caricamento della pagina o ad intervalli regolari
+    document.addEventListener('DOMContentLoaded', function() {
+        // Aggiorna i dati ogni secondo
+        setInterval(fetchData, 1000);
+    });
+</script>
+</body>
+</html>

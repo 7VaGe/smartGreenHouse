@@ -30,10 +30,7 @@ public class DataService extends AbstractVerticle {
 	private LinkedList<DataPoint> values;
 	private static final String PORT = "COM4"; //porta arduino
 	private static int BAUD = 9600;
-	/*private static final double DELTA= 0.05;
-	private static final double UMIN = 0.10;
-	private static final double UMED = 0.20;
-	private static final double UMAX = 0.30;*/
+	
 	
 	public DataService(int port) {
 		values = new LinkedList<>();		
@@ -47,8 +44,22 @@ public class DataService extends AbstractVerticle {
 		router.route().handler(BodyHandler.create());
 		
 		router.post("/api/data").handler(this::handleAddNewData);
-			
-		router.get("/api/data").handler(this::handleGetData);		
+		router.get("/api/data").handler(this::handleGetData);
+		router.route("/").handler(routingContext -> {
+	        vertx.fileSystem().readFile("Resources/index.html", result -> {
+	            if (result.succeeded()) {
+	                routingContext.response()
+	                    .putHeader("content-type", "text/html")
+	                    .end(result.result());
+	            } else {
+	                routingContext.response()
+	                    .setStatusCode(500)
+	                    .end("Internal Server Error sdvdfsdfsdfd");
+	            }
+	        });
+	    });
+		
+		
 		vertx
 			.createHttpServer()
 			.requestHandler(router)
@@ -62,7 +73,7 @@ public class DataService extends AbstractVerticle {
                 .addOutboundPermitted(new PermittedOptions().setAddress("dataUpdate"));
         sockJSHandler.bridge(options);
         
-        router.route("/eventbus/*").handler(sockJSHandler);
+        router.route("/api/data").handler(sockJSHandler);
         // eventbus ancora non capito, ma sembra fondamentale.
 		log("Service ready.");
 	
@@ -78,10 +89,10 @@ public class DataService extends AbstractVerticle {
 	 * */
 	
 	 private void updateData(long time, float value, String place) {
-	        JsonObject update = new JsonObject()
-	                .put("time",time)
-	                .put("value", value)
-	                .put("place", place);
+		 	JsonObject update = new JsonObject()
+	               .put("time",time)
+	               .put("value", value)
+	               .put("place", place);               
 	        vertx.eventBus().publish("dataUpdate", update);
 	    }
 	 
