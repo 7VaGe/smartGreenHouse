@@ -1,5 +1,5 @@
-#ifndef __CANALE_COM__
-#define __CANALE_COM__
+#ifndef __CANALECOM__
+#define __CANALECOM__
 
 #include "Arduino.h"
 
