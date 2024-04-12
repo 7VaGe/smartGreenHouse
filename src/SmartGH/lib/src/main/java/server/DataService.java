@@ -41,8 +41,7 @@ public class DataService extends AbstractVerticle {
 	
 	public void start() {		
 		Router router = Router.router(vertx);
-		router.route().handler(BodyHandler.create());
-		
+		router.route().handler(BodyHandler.create());	
 		router.post("/api/data").handler(this::handleAddNewData);
 		router.get("/api/data").handler(this::handleGetData);
 		router.route("/").handler(routingContext -> {
@@ -58,15 +57,15 @@ public class DataService extends AbstractVerticle {
 	            }
 	        });
 	    });
-		
-		
+
 		vertx
 			.createHttpServer()
 			.requestHandler(router)
 			.listen(port);
 		router.route().failureHandler(this::handleFailure);
 		/*
-		 * Parte per l'aggiornamento automatico delle pagine web, non funzionante.
+		 * WEbsocket per aggiornamento delle rilevazioni.
+		 * 
 		 * */
 		SockJSHandler sockJSHandler = SockJSHandler.create(vertx);
 		SockJSBridgeOptions options = new SockJSBridgeOptions()
@@ -74,7 +73,6 @@ public class DataService extends AbstractVerticle {
         sockJSHandler.bridge(options);
         
         router.route("/api/data").handler(sockJSHandler);
-        // eventbus ancora non capito, ma sembra fondamentale.
 		log("Service ready.");
 	
 		InetAddress ip;
@@ -85,9 +83,7 @@ public class DataService extends AbstractVerticle {
             e.printStackTrace();
         }
 	}
-	/*
-	 * */
-	
+
 	 private void updateData(long time, float value, String place) {
 		 	JsonObject update = new JsonObject()
 	               .put("time",time)
