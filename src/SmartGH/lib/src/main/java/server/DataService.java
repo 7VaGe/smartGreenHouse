@@ -3,7 +3,6 @@ package server;
 import io.vertx.core.AbstractVerticle;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
@@ -31,10 +30,10 @@ public class DataService extends AbstractVerticle {
 	private LinkedList<DataPoint> values;
 	private static final String PORT = "COM4"; //porta arduino
 	private static int BAUD = 9600;
-	private static final double DELTA= 0.05;
+	/*private static final double DELTA= 0.05;
 	private static final double UMIN = 0.10;
 	private static final double UMED = 0.20;
-	private static final double UMAX = 0.30;
+	private static final double UMAX = 0.30;*/
 	
 	public DataService(int port) {
 		values = new LinkedList<>();		
@@ -55,23 +54,28 @@ public class DataService extends AbstractVerticle {
 			.requestHandler(router)
 			.listen(port);
 		router.route().failureHandler(this::handleFailure);
+		/*
+		 * Parte per l'aggiornamento automatico delle pagine web, non funzionante.
+		 * */
 		SockJSHandler sockJSHandler = SockJSHandler.create(vertx);
 		SockJSBridgeOptions options = new SockJSBridgeOptions()
                 .addOutboundPermitted(new PermittedOptions().setAddress("dataUpdate"));
         sockJSHandler.bridge(options);
         
         router.route("/eventbus/*").handler(sockJSHandler);
+        // eventbus ancora non capito, ma sembra fondamentale.
 		log("Service ready.");
 	
 		InetAddress ip;
         try {
             ip = InetAddress.getLocalHost();         
             System.out.println("Your current IP address : " + ip); //l'indirizzo che mi serve da inseriere su arduino ide ESP
-           // System.out.println("Your current Hostname : " + hostname);
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
 	}
+	/*
+	 * */
 	
 	 private void updateData(long time, float value, String place) {
 	        JsonObject update = new JsonObject()
@@ -129,11 +133,5 @@ public class DataService extends AbstractVerticle {
 
 	private void log(String string) {
 		System.out.println("[DATA SERVICE] "+ string);
-	}
-
-	public static void main(String[] args) {
-		Vertx vertx = Vertx.vertx();
-		DataService service = new DataService(8080); //cambiare questa porta con quella aperta da ngrok
-		vertx.deployVerticle(service);
 	}
 }
