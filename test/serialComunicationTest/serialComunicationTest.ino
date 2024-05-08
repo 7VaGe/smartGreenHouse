@@ -36,6 +36,8 @@ void loop() {
       }
     delete msg;
   }else{
-    MsgService.sendMsg("go");
+    int val=random(1,3);
+     Serial.println(val);
+     delay(2000);
   }
 }
