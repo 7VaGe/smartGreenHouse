@@ -9,35 +9,44 @@
  */ 
 
 MsgServiceBT msgServiceBt(2,3);
-
+int count=0;
 void setup() {
   MsgService.init();
   msgServiceBt.init();
-  
+
 }
 
 void loop() {
   if (MsgService.isMsgAvailable()){
     Msg* msg = MsgService.receiveMsg();
-    if(msg->getContent()=='5'){
+    if(msg->getContent()=="5"){
       digitalWrite(LEDm, HIGH);
       delay(1000);
       digitalWrite(LEDm, LOW);
       }
-    if(msg->getContent()=='6'){
+    if(msg->getContent()=="6"){
       digitalWrite(LEDa, HIGH);
       delay(1000);
       digitalWrite(LEDa, LOW);
       }
-    if(msg->getContent()=='7'){
+    if(msg->getContent()=="7"){
       digitalWrite(LEDp, HIGH);
       delay(1000);
       digitalWrite(LEDp, LOW);
       }
     delete msg;
   }else{
-    int val=random(1,3);
-     Serial.println(val);
-     delay(2000);
+    if(count=0){    
+      MsgService.sendMsg("1");
+      count = count+1;     
+    }
+     if(count=1){    
+      MsgService.sendMsg("2");
+      count = count+1;     
+    }
+     if(count=2){    
+      MsgService.sendMsg("3");
+      count = 0;     
+    }
   }
 }
