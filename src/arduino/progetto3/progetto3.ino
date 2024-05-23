@@ -5,8 +5,6 @@
 #include "Define.h"
 #include "Automatic.h"
 #include "ManualState.h"
-#include "Timer.h"
-#include "Task.h"
 #include "Scheduler.h"
 #include "CanaleCom.h"
 #include "MsgServiceBT.h"
@@ -16,14 +14,14 @@
 extern bool aState;
 extern bool mState;
 
-Timer timer;
+
 
 Scheduler sched;
 
 MsgServiceBT MsgBT(3,4);
 
 void setup(){
-  timer.setupPeriod(50);
+
   sched.init(50);
   MsgBT.init();
   MsgService.init();
