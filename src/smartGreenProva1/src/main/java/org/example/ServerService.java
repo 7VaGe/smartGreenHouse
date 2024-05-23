@@ -68,12 +68,12 @@ public class ServerService extends AbstractVerticle {
         sockJSHandler.bridge(options);
 
         router.route("/api/data").handler(sockJSHandler);
-        log("Service ready.");
+        log("Ready.");
 
         InetAddress ip;
         try {
             ip = InetAddress.getLocalHost();
-            System.out.println("Your current IP address : " + ip); //l'indirizzo che mi serve da inseriere su arduino ide ESP
+            log("Your current IP address : " + ip); //l'indirizzo che mi serve da inseriere su arduino ide ESP
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
@@ -125,7 +125,7 @@ public class ServerService extends AbstractVerticle {
                 values.removeLast();
             }
             updateData(time,value,place);
-            log("New value: " + value + " from " + place + " on " + new Date(time)+"\n Arrivato a: "+ System.currentTimeMillis());
+            log("New value: " + value + " from " + place + " on " + new Date(time));
             response.setStatusCode(200).end();
         }
     }
@@ -142,7 +142,7 @@ public class ServerService extends AbstractVerticle {
         vertx.eventBus().publish("dataUpdate", update);
     }
     private void log(String string) {
-        System.out.println("[DATA SERVICE] "+ string);
+        System.out.println("[SERVER] | "+ string);
     }
 
 }

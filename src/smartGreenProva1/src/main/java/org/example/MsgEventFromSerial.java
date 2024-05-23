@@ -1,7 +1,5 @@
 package org.example;
 
-
-
 public class MsgEventFromSerial implements Event {
 
     private String msg;

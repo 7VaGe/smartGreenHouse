@@ -41,13 +41,9 @@ public class SerialCommChannel implements CommChannel, SerialPortEventListener {
             if (serialPortEvent.isRXCHAR()) {
                 try {
                     String msg = serialPort.readString(serialPortEvent.getEventValue());
-
                     msg = msg.replaceAll("\r", "");
-
                     currentMsg.append(msg);
-
                     boolean goAhead = true;
-
                     while(goAhead) {
                         String msg2 = currentMsg.toString();
                         int index = msg2.indexOf("\n");
@@ -61,7 +57,6 @@ public class SerialCommChannel implements CommChannel, SerialPortEventListener {
                             goAhead = false;
                         }
                     }
-
                 } catch (Exception ex) {
                     ex.printStackTrace();
                     System.out.println("Error in receiving string from COM-port: " + ex);
@@ -95,7 +90,6 @@ public class SerialCommChannel implements CommChannel, SerialPortEventListener {
         public boolean isMsgAvaiable () {
             return !queue.isEmpty();
         }
-
 
 }
 

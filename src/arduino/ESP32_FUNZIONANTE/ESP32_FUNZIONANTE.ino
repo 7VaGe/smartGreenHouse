@@ -59,5 +59,5 @@ void loop() {
  } else { 
    Serial.println("Error in WiFi connection");   
  }
- delay(5000);  
+ delay(1000);  
 }

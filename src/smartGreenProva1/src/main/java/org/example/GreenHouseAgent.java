@@ -5,12 +5,11 @@ import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.json.JsonObject;
 
 import java.util.Objects;
-import java.util.Timer;
+
 
 public class GreenHouseAgent extends BasicEventLoopController {
     private final MsgService msgService;
     private EventBus eventBus;
-
 
     @Override
     public boolean notifyEvent(Event ev) {
@@ -31,6 +30,7 @@ public class GreenHouseAgent extends BasicEventLoopController {
     private String oldMsgWitholdValue = "";
     private ObservableTimer timer;
     private boolean timerIsAlive = false;
+    private boolean pumpState = false;
 
     public GreenHouseAgent(String port, int rate, EventBus eventBus){
         super();
@@ -47,14 +47,10 @@ public class GreenHouseAgent extends BasicEventLoopController {
             double value = event.getDouble("value");
             processEvent(new MsgEventFromWifi(Double.toString(value)));
         });
-
-
     }
-
     public void sendData(String data){
         msgService.sendMsg(data);
     }
-
 
     @Override
     protected void processEvent(Event ev) {
@@ -87,8 +83,9 @@ public class GreenHouseAgent extends BasicEventLoopController {
                                     .put("place", place);
                             eventBus.publish("ErogationStop.new", msg);
                             System.out.println("[TICK] | Arrivato a: "+System.currentTimeMillis());
-                            System.out.println("[EVENTO TICK] | Chiudo pompa e spengo il Timer: "+ timer.toString());
+                            //System.out.println("[TICK] | Invio la Chiusura pompa:");
                             msgService.sendMsg(String.valueOf(PCLOSE));
+                            pumpState= false;
                             timerIsAlive = false;
                             timer.stop();
                         }else if (ev instanceof MsgEventFromSerial) {
@@ -98,37 +95,41 @@ public class GreenHouseAgent extends BasicEventLoopController {
                         }else if (ev instanceof MsgEventFromWifi) {
                             //messaggio da wifi se è in automatico, cosa fare.
                             String newMsg = ((MsgEventFromWifi) ev).getMsg();
+                            double msgFromWifi = Double.parseDouble(newMsg);
                             if (Objects.equals(oldMsgWitholdValue, newMsg)){
                                 //lancia timer
-                                if(!timerIsAlive){
-                                    System.out.println("[TIMER] | Avvio Timer: " + timer.toString() );
-                                    timer.scheduleTick(5000);
+                                if(!timerIsAlive && pumpState){
+                                    timer.start(5000);
                                     System.out.println("[TIMER] | Partito a: "+ System.currentTimeMillis());
                                     timerIsAlive = true;
                                 }
-                                oldMsgWitholdValue = ((MsgEventFromWifi) ev).getMsg();
-                            } else {
+                                oldMsgWitholdValue = newMsg;
+                            }  else {
+                                //se i messaggi sono diversi e
                                 //se c'è un timer lo chiudi
                                 if(timerIsAlive){
                                     System.out.println("[TIMER] | Fermato a: "+System.currentTimeMillis());
                                     timer.stop();
                                     timerIsAlive = false;
-                                    System.out.println("[TIMER] | Spengo Timer: " + timer.toString() );
+                                    System.out.println("[TIMER] | Spengo Timer" );
+                                }
+                                if (msgFromWifi > (UMIN + DELTA)) {
+                                    msgService.sendMsg(String.valueOf(PCLOSE));
+                                    pumpState = false;
+                                } else if ((msgFromWifi <= (UMIN + DELTA)) && (msgFromWifi >= UMED)) {
+                                    //Se è minore di 35 e maggiore di 20 mandi PMIN
+                                    msgService.sendMsg(String.valueOf(PMIN));
+                                    pumpState = true;
+                                } else if ((msgFromWifi < UMED) && (msgFromWifi >= UMAX)) {
+                                    //Se è minore di 20 e maggiore di 10 mandi PMED
+                                    msgService.sendMsg(String.valueOf(PMED));
+                                    pumpState = true;
+                                } else {
+                                    //Se è minore di 10 e maggiore di 0 mandi PMAX
+                                    pumpState= true;
+                                    msgService.sendMsg(String.valueOf(PMAX));
                                 }
                                 oldMsgWitholdValue = newMsg;
-                            }
-                            double msgFromWifi = Double.parseDouble(newMsg);
-                            if (msgFromWifi > (UMIN + DELTA)) {
-                                msgService.sendMsg(String.valueOf(PCLOSE));
-                            } else if ((msgFromWifi <= (UMIN + DELTA)) && (msgFromWifi >= UMED)) {
-                                //Se è minore di 35 e maggiore di 20 mandi PMIN
-                                msgService.sendMsg(String.valueOf(PMIN));
-                            } else if ((msgFromWifi < UMED) && (msgFromWifi >= UMAX)) {
-                                //Se è minore di 20 e maggiore di 10 mandi PMED
-                                msgService.sendMsg(String.valueOf(PMED));
-                            } else {
-                                //Se è minore di 10 e maggiore di 0 mandi PMAX
-                                msgService.sendMsg(String.valueOf(PMAX));
                             }
                         }
                         break;
