@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Bluetooth Chat - Client</string>
+    <string name="connect_to_bluetooth_server">CONNECT TO BLUETOOTH SERVER</string>
+    <string name="status_not_connected">Status : not connected</string>
+    <string name="send">SEND</string>
+    <string name="umidity_value">UMIDITY VALUE</string>
+    <string name="textview">TextView</string>
+    <string name="close_erogation">Close erogation</string>
+    <string name="start_erogation">Start erogation</string>
+    <string name="insert_water_volume_in_liters_minutes">Insert water volume in liters/minutes</string>
+</resources>
