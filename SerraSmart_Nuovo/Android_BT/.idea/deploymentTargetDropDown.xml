@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="deploymentTargetDropDown">
+    <value>
+      <entry key="bt-client">
+        <State />
+      </entry>
+      <entry key="bt-client-for-emulator">
+        <State />
+      </entry>
+      <entry key="bt-server">
+        <State />
+      </entry>
+    </value>
+  </component>
+</project>
