@@ -16,6 +16,10 @@ void ManualState::init(int period){
   Task::init(period);
 }
 
+double ManualState::mapPump(double val, double valInMin, double valInMax, double valOutMin, double valOutMax){
+  return (val-valInMin)*(valOutMax-valOutMin)/(valInMax-valInMin)+valOutMin;
+}
+
 void ManualState::tick(){
   if(pState->isManuale()){
     this->ledManual->switchOn();
@@ -28,19 +32,20 @@ void ManualState::tick(){
       MsgService.sendMsg("A");
       this->ledManual->switchOff();
       pState->setAutomatico();
-          
     }
     if(MsgService.isMsgAvailable()){
        Msg* msg = MsgService.receiveMsg();
-       appoggio = msg->getContent();
-
-       if(appoggio.toInt()=="5"){
+       String comunicazione = msg->getContent();
+       String head = comunicazione.substring(0,1);
+       appoggio = comunicazione.substring(1);
+       if(head==HAUTO){
           pState->setAutomatico();
           this->ledManual->switchOff();
-       }else{      
+       }else if(head==HPumpServo){
           this->ledPump->setIntensity(appoggio.toInt());
           Pump->setAngle(appoggio.toInt());
-          MsgBT.sendMsg(appoggio);
+       }else{
+          MsgBT.sendMsg(Msg(appoggio));
        }
     }
   }

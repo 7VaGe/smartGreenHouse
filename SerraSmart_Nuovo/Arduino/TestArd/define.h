@@ -21,5 +21,12 @@
 #define RX 3
 #define TX 2
 
+#define HPmin 'c'
+#define HPmed 'd'
+#define HPmax 'e'
+#define HPclose 'f'
+#define HPumpServo 'p'
+#define HMANUAL 'm'
+#define HAUTO 'a'
 
 #endif

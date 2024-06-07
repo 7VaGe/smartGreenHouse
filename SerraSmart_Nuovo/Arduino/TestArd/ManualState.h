@@ -20,6 +20,8 @@ public:
   ManualState(Led* ledManual, Led* ledPump, Sonar* proxy, ShareState* pState, ServoIdrante* Pump);
   void init(int period);
   void tick();
+  double mapPump(double val, double valInMin, double valInMax, double valOutMin, double valOutMax);
+  
 private:
   String appoggio;
   

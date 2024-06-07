@@ -29,29 +29,33 @@ void Automatic::tick(){
     }
     if(MsgService.isMsgAvailable()){
        Msg* msg = MsgService.receiveMsg();
-       String val = msg->getContent();
-       MsgBT.sendMsg(Msg(val));
-       switch(val.toInt()){
-        case 8:
+       String comunicazione = msg->getContent();
+       String head = comunicazione.substring(0,1);
+       String appoggio = comunicazione.substring(1);
+       char usable[2];
+       head.toCharArray(usable, 2);
+       MsgBT.sendMsg(Msg(appoggio));
+       switch(usable[0]){
+        case HMANUAL:
           pState->setManuale();
           this->ledAuto->switchOff();
           break;
-        case 4:
+        case HPclose:
           this->ledPump->switchOff();
           MsgService.sendMsg("[LED] | Chiuso");
           Pump->closeIdrante();
           break;
-        case 30:
+        case HPmin:
           this->ledPump->setIntensity(Pmin);
           Pump->setAngle(PORTATA_MIN);
           MsgService.sendMsg("[LED] | Caso 3");
           break;
-        case 20:
+        case HPmed:
           this->ledPump->setIntensity(Pmid);
           MsgService.sendMsg("[LED] | Caso 2");
           Pump->setAngle(PORTATA_MED);
           break;
-        case 10:
+        case HPmax:
           this->ledPump->setIntensity(Pmax);
           MsgService.sendMsg("[LED] | Caso 1");
           Pump->setAngle(PORTATA_MAX);
