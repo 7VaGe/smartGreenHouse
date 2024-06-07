@@ -36,7 +36,7 @@ import unibo.btlib.exceptions.BluetoothDeviceNotFound;
  */
 public class HomeFragment extends Fragment {
 
-    private ActivityResultLauncher<Intent> firstActivityResultLauncher;
+    // private ActivityResultLauncher<Intent> firstActivityResultLauncher;
     public HomeFragment() {
     }
 
@@ -65,9 +65,6 @@ public class HomeFragment extends Fragment {
     public static HomeFragment newInstance(/*String param1, String param2*/) {
         HomeFragment fragment = new HomeFragment();
         Bundle args = new Bundle();
-       /* args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);*/
         return fragment;
     }
 
@@ -76,7 +73,7 @@ public class HomeFragment extends Fragment {
 
         void backHome();
 
-        void connectToBt();
+        void connectToBt() throws BluetoothDeviceNotFound;
 
 
         }
@@ -112,11 +109,16 @@ public class HomeFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
 
-       Button btBtn = (Button) view.findViewById(R.id.btBtn);
+       Button btBtn = view.findViewById(R.id.btBtn);
         btBtn.setOnClickListener(view1 -> {
             //showToast("Hai premuto!");
-            listener.connectToBt();
-            listener.goToSmartGreenHouse();
+            try {
+                listener.connectToBt();
+            } catch (BluetoothDeviceNotFound e) {
+                throw new RuntimeException(e);
+            }
+            //in base al risultato dell'istruzione prima, se è vero, passi alla fragment della serra.
+           // listener.goToSmartGreenHouse();
         });
         return view;
     }

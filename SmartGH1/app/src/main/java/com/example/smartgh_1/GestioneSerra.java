@@ -13,8 +13,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
 public class GestioneSerra extends Fragment {
@@ -40,7 +38,7 @@ public class GestioneSerra extends Fragment {
         View view = inflater.inflate(R.layout.fragment_gestione_serra, container, false);
         sBar = view.findViewById(R.id.seekBar);
         tView = view.findViewById(R.id.textview);
-        Button backHome = (Button) view.findViewById(R.id.backHome);
+        Button backHome = view.findViewById(R.id.backHome);
         backHome.setOnClickListener(view1 -> {
             String sval = (String) tView.getText(); //metto il valore della textview in una variabile, pronto da inviare al canale Bluetooth
             //torna indietro
@@ -72,8 +70,7 @@ public class GestioneSerra extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        GestioneSerraViewModel mViewModel = new ViewModelProvider(this).get(GestioneSerraViewModel.class);
-        // TODO: Usa il ViewModel come necessario
+        GestioneSerraViewModel mViewModel = new ViewModelProvider(this).get(GestioneSerraViewModel.class);// TODO: Usa il ViewModel come necessario
 
     }
 

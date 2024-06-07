@@ -23,10 +23,12 @@ public class GreenHouseAgent extends BasicEventLoopController {
     private static final double UMIN= 0.30;
     private static final double UMED= 0.20;
     private static final double UMAX= 0.10;
-    private static final int PMIN= 3;
-    private static final int PMED= 2;
-    private static final int PMAX= 1;
+    private static final int PMIN= 30;
+    private static final int PMED= 20;
+    private static final int PMAX= 10;
     private static final int PCLOSE= 4;
+    private static final int BLUETOOTHCHANGESTATEMANUAL= 8;
+    private static final int BLUETOOTHCHANGESTATEAUTO= 5;
     private String oldMsgWitholdValue = "";
     private ObservableTimer timer;
     private boolean timerIsAlive = false;
@@ -64,7 +66,6 @@ public class GreenHouseAgent extends BasicEventLoopController {
                                 //Se ha l'header B prendi i restanti caratteri e invia il valore ad arduino.
                                 String msgFromSerialWithoutHeader = ((MsgEventFromSerial) ev).getMsg().substring(1);
                                 msgService.sendMsg(msgFromSerialWithoutHeader);
-
                             }
                         } else if (ev instanceof MsgEventFromWifi) {
                             //messaggio da wifi se è in manuale, cosa fare.
@@ -89,13 +90,19 @@ public class GreenHouseAgent extends BasicEventLoopController {
                             timerIsAlive = false;
                             timer.stop();
                         }else if (ev instanceof MsgEventFromSerial) {
-                            if (((MsgEventFromSerial) ev).getHeader(((MsgEventFromSerial) ev).getMsg()) == ('B')) {
+                            if (Objects.equals(((MsgEventFromSerial) ev).getMsg(), String.valueOf('B'))) {
+                                System.out.println("[TIMER] | Partito a: "+ ((MsgEventFromSerial) ev).getMsg());
                                 currentState = State.MANUAL;
+                                msgService.sendMsg(String.valueOf(BLUETOOTHCHANGESTATEMANUAL));
+                            } else if (Objects.equals(((MsgEventFromSerial) ev).getMsg(), String.valueOf('A'))) {
+                                currentState = State.AUTOMATIC;
+                                msgService.sendMsg(String.valueOf(BLUETOOTHCHANGESTATEAUTO));
                             }
                         }else if (ev instanceof MsgEventFromWifi) {
                             //messaggio da wifi se è in automatico, cosa fare.
                             String newMsg = ((MsgEventFromWifi) ev).getMsg();
                             double msgFromWifi = Double.parseDouble(newMsg);
+                            msgService.sendMsg(newMsg);
                             if (Objects.equals(oldMsgWitholdValue, newMsg)){
                                 //lancia timer
                                 if(!timerIsAlive && pumpState){
@@ -113,6 +120,7 @@ public class GreenHouseAgent extends BasicEventLoopController {
                                     timerIsAlive = false;
                                     System.out.println("[TIMER] | Spengo Timer" );
                                 }
+
                                 if (msgFromWifi > (UMIN + DELTA)) {
                                     msgService.sendMsg(String.valueOf(PCLOSE));
                                     pumpState = false;
