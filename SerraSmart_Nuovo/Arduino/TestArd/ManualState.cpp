@@ -23,6 +23,9 @@ double ManualState::mapPump(double val, double valInMin, double valInMax, double
 void ManualState::tick(){
   if(pState->isManuale()){
     this->ledManual->switchOn();
+    //va inserito lo stesso controllo, quando invio alla pompa il comando
+    //di chiusura cosicchè la pompa smette di erogare, e si ferma.
+    //al momento anche se io invio un valore non viene eseguito sulla pompa.
     if(MsgBT.isMsgAvailable()){
       Msg* msgBt = MsgBT.receiveMsg();
       appoggio = msgBt->getContent();
