@@ -23,12 +23,12 @@ public class GreenHouseAgent extends BasicEventLoopController {
     private static final double UMIN= 0.30;
     private static final double UMED= 0.20;
     private static final double UMAX= 0.10;
-    private static final int PMIN= 30;
-    private static final int PMED= 20;
-    private static final int PMAX= 10;
-    private static final int PCLOSE= 4;
-    private static final int BLUETOOTHCHANGESTATEMANUAL= 8;
-    private static final int BLUETOOTHCHANGESTATEAUTO= 5;
+    private static final char PMIN= 'c';
+    private static final char PMED= 'd';
+    private static final char PMAX= 'e';
+    private static final char PCLOSE= 'f';
+    private static final String BLUETOOTHCHANGESTATEMANUAL= "bm";
+    private static final String BLUETOOTHCHANGESTATEAUTO= "ba";
     private String oldMsgWitholdValue = "";
     private ObservableTimer timer;
     private boolean timerIsAlive = false;
