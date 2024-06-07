@@ -9,7 +9,7 @@ import java.util.Objects;
 
 public class GreenHouseAgent extends BasicEventLoopController {
     private final MsgService msgService;
-    private EventBus eventBus;
+    private final EventBus eventBus;
 
     @Override
     public boolean notifyEvent(Event ev) {
@@ -27,12 +27,14 @@ public class GreenHouseAgent extends BasicEventLoopController {
     private static final char PMED= 'd';
     private static final char PMAX= 'e';
     private static final char PCLOSE= 'f';
-    private static final String BLUETOOTHCHANGESTATEMANUAL= "bm";
-    private static final String BLUETOOTHCHANGESTATEAUTO= "ba";
+    private static final String BLUETOOTHCHANGESTATEMANUAL= "m";
+    private static final String BLUETOOTHCHANGESTATEAUTO= "a";
+   // private static final double ZERO = 0.00;
     private String oldMsgWitholdValue = "";
-    private ObservableTimer timer;
+    private final ObservableTimer timer;
     private boolean timerIsAlive = false;
     private boolean pumpState = false;
+    private double msgFromWifiEventBridge;
 
     public GreenHouseAgent(String port, int rate, EventBus eventBus){
         super();
@@ -57,7 +59,8 @@ public class GreenHouseAgent extends BasicEventLoopController {
     @Override
     protected void processEvent(Event ev) {
         try{
-                switch(currentState) {
+            String msgContainer;
+            switch(currentState) {
                     case MANUAL:
                         if (ev instanceof MsgEventFromSerial) {
                             if (((MsgEventFromSerial) ev).getHeader(((MsgEventFromSerial) ev).getMsg()) != 'B') {
@@ -74,7 +77,7 @@ public class GreenHouseAgent extends BasicEventLoopController {
                         }
                         break;
                     case AUTOMATIC:
-                        if (ev instanceof Tick) { //controllare bene questa parte sembra che ci siano delle cose che non vanno.
+                        if (ev instanceof Tick) {
                             double value = 0.00;
                             String place = "Timer | Timer expired";
                             long time = System.currentTimeMillis();
@@ -84,8 +87,8 @@ public class GreenHouseAgent extends BasicEventLoopController {
                                     .put("place", place);
                             eventBus.publish("ErogationStop.new", msg);
                             System.out.println("[TICK] | Arrivato a: "+System.currentTimeMillis());
-                            //System.out.println("[TICK] | Invio la Chiusura pompa:");
-                            msgService.sendMsg(String.valueOf(PCLOSE));
+                            msgContainer = PCLOSE+String.valueOf(msgFromWifiEventBridge);
+                            msgService.sendMsg(msgContainer);
                             pumpState= false;
                             timerIsAlive = false;
                             timer.stop();
@@ -93,16 +96,17 @@ public class GreenHouseAgent extends BasicEventLoopController {
                             if (Objects.equals(((MsgEventFromSerial) ev).getMsg(), String.valueOf('B'))) {
                                 System.out.println("[TIMER] | Partito a: "+ ((MsgEventFromSerial) ev).getMsg());
                                 currentState = State.MANUAL;
-                                msgService.sendMsg(String.valueOf(BLUETOOTHCHANGESTATEMANUAL));
+                                msgService.sendMsg(BLUETOOTHCHANGESTATEMANUAL+ msgFromWifiEventBridge);
                             } else if (Objects.equals(((MsgEventFromSerial) ev).getMsg(), String.valueOf('A'))) {
                                 currentState = State.AUTOMATIC;
-                                msgService.sendMsg(String.valueOf(BLUETOOTHCHANGESTATEAUTO));
+                                msgService.sendMsg(BLUETOOTHCHANGESTATEAUTO+ msgFromWifiEventBridge);
                             }
                         }else if (ev instanceof MsgEventFromWifi) {
                             //messaggio da wifi se è in automatico, cosa fare.
                             String newMsg = ((MsgEventFromWifi) ev).getMsg();
                             double msgFromWifi = Double.parseDouble(newMsg);
-                            msgService.sendMsg(newMsg);
+                            msgFromWifiEventBridge = msgFromWifi;
+                           // msgService.sendMsg(newMsg);
                             if (Objects.equals(oldMsgWitholdValue, newMsg)){
                                 //lancia timer
                                 if(!timerIsAlive && pumpState){
@@ -122,20 +126,24 @@ public class GreenHouseAgent extends BasicEventLoopController {
                                 }
 
                                 if (msgFromWifi > (UMIN + DELTA)) {
-                                    msgService.sendMsg(String.valueOf(PCLOSE));
+                                    msgContainer = PCLOSE+String.valueOf(msgFromWifi);
+                                    msgService.sendMsg(msgContainer);
                                     pumpState = false;
                                 } else if ((msgFromWifi <= (UMIN + DELTA)) && (msgFromWifi >= UMED)) {
                                     //Se è minore di 35 e maggiore di 20 mandi PMIN
-                                    msgService.sendMsg(String.valueOf(PMIN));
+                                    msgContainer = PMIN+String.valueOf(msgFromWifi);
+                                    msgService.sendMsg(msgContainer);
                                     pumpState = true;
                                 } else if ((msgFromWifi < UMED) && (msgFromWifi >= UMAX)) {
                                     //Se è minore di 20 e maggiore di 10 mandi PMED
-                                    msgService.sendMsg(String.valueOf(PMED));
+                                    msgContainer = PMED + String.valueOf(msgFromWifi);
+                                    msgService.sendMsg(msgContainer);
                                     pumpState = true;
                                 } else {
                                     //Se è minore di 10 e maggiore di 0 mandi PMAX
+                                    msgContainer =  PMAX + String.valueOf(msgFromWifi);
+                                    msgService.sendMsg(msgContainer);
                                     pumpState= true;
-                                    msgService.sendMsg(String.valueOf(PMAX));
                                 }
                                 oldMsgWitholdValue = newMsg;
                             }
