@@ -36,21 +36,24 @@ void ManualState::tick(){
       this->ledManual->switchOff();
       pState->setAutomatico();
     }
-    if(MsgService.isMsgAvailable()){
+    if(MsgService.isMsgAvailable()){ 
        Msg* msg = MsgService.receiveMsg();
-       //quando invio un valore da seriale, in modalità manuale, il server mi invia come risposta un messaggio 0.15 esempio, io qui, tolgo il primo carattere e ottengo un .15, che viene inoltrato al BT
-       //questo non funziona, va deciso se inserirci un header per farlo lavorare con il codice creato qua, oppure cambiare qui il codice e adattarlo al java.
        String comunicazione = msg->getContent();
-       double temp = comunicazione.toDouble();
+       String head = comunicazione.substring(0,1);
+       appoggio = comunicazione.substring(1);
+       double temp = appoggio.toDouble();
        temp = mapPump(temp,VAL_START,VAL_STOP,PUMP_CLOSE,PUMP_MAX);
-       if(comunicazione==HAUTO){
+       if(head==HAUTO){
           pState->setAutomatico();
           this->ledManual->switchOff();
-       }else{
-          this->ledPump->setIntensity(temp);
-          Pump->setAngle(temp); 
        }
-       MsgBT.sendMsg(comunicazione);
+       if(head==HTrace){
+          MsgBT.sendMsg(Msg(appoggio));
+       }
+       if(head==HPumpServo){
+          this->ledPump->setIntensity(temp);
+          Pump->setAngle(temp);
+       }
     }
   }
 }

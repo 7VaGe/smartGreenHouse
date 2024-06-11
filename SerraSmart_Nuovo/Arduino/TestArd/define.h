@@ -32,5 +32,6 @@
 #define HPumpServo 'p'
 #define HMANUAL 'm'
 #define HAUTO 'a'
+#define HTrace 'r'
 
 #endif
