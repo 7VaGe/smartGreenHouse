@@ -63,29 +63,39 @@ public class GreenHouseAgent extends BasicEventLoopController {
             switch(currentState) {
                     case MANUAL:
                         if (ev instanceof MsgEventFromSerial) {
-                            if (((MsgEventFromSerial) ev).getHeader(((MsgEventFromSerial) ev).getMsg()) != 'B') {
+                            if (((MsgEventFromSerial) ev).getHeader(((MsgEventFromSerial) ev).getMsg()) == 'A') {
                                 currentState = State.AUTOMATIC;
                             } else {
                                 //Se ha l'header B prendi i restanti caratteri e invia il valore ad arduino.
-                                String msgFromSerialWithoutHeader = ((MsgEventFromSerial) ev).getMsg().substring(1);
-                                msgService.sendMsg(msgFromSerialWithoutHeader);
+                                /*String msgFromSerialWithoutHeader = ((MsgEventFromSerial) ev).getMsg().substring(1);*/
+                                System.out.println("[SERIALE MANUALE] | RICEVUTO DA ARDUINO: "+((MsgEventFromSerial) ev).getMsg());
+                                msgService.sendMsg(((MsgEventFromSerial) ev).getMsg());
+                                double value = Double.parseDouble(((MsgEventFromSerial) ev).getMsg());
+                                String place = "Bluetooth";
+                                long time = System.currentTimeMillis();
+                                JsonObject newDataFromSerial = new JsonObject()
+                                        .put("value", value)
+                                        .put("time", time)
+                                        .put("place", place);
+                                eventBus.publish("/api/data", newDataFromSerial);
                             }
                         } else if (ev instanceof MsgEventFromWifi) {
                             //messaggio da wifi se è in manuale, cosa fare.
                             double msgFromWifi = Double.parseDouble((((MsgEventFromWifi) ev).getMsg()));
-                            msgService.sendMsg(String.valueOf(msgFromWifi));
+                            //ulteriore problema in modalità manuale, continuiamo a inviare i valori ricevuti da wifi e questo reimposta la pompa ogni volta con un valore che non è quello impostato da telefono.
+                            //msgService.sendMsg(String.valueOf(msgFromWifi));
                         }
                         break;
                     case AUTOMATIC:
                         if (ev instanceof Tick) {
                             double value = 0.00;
-                            String place = "Timer | Timer expired";
+                            String place = "Server";
                             long time = System.currentTimeMillis();
                             JsonObject msg = new JsonObject()
                                     .put("value", value)
                                     .put("time", time)
                                     .put("place", place);
-                            eventBus.publish("ErogationStop.new", msg);
+                            eventBus.publish("/api/data", msg);
                             System.out.println("[TICK] | Arrivato a: "+System.currentTimeMillis());
                             msgContainer = PCLOSE+String.valueOf(msgFromWifiEventBridge);
                             msgService.sendMsg(msgContainer);
@@ -94,7 +104,6 @@ public class GreenHouseAgent extends BasicEventLoopController {
                             timer.stop();
                         }else if (ev instanceof MsgEventFromSerial) {
                             if (Objects.equals(((MsgEventFromSerial) ev).getMsg(), String.valueOf('B'))) {
-                                System.out.println("[TIMER] | Partito a: "+ ((MsgEventFromSerial) ev).getMsg());
                                 currentState = State.MANUAL;
                                 msgService.sendMsg(BLUETOOTHCHANGESTATEMANUAL+ msgFromWifiEventBridge);
                             } else if (Objects.equals(((MsgEventFromSerial) ev).getMsg(), String.valueOf('A'))) {
@@ -124,7 +133,6 @@ public class GreenHouseAgent extends BasicEventLoopController {
                                     timerIsAlive = false;
                                     System.out.println("[TIMER] | Spengo Timer" );
                                 }
-
                                 if (msgFromWifi > (UMIN + DELTA)) {
                                     msgContainer = PCLOSE+String.valueOf(msgFromWifi);
                                     msgService.sendMsg(msgContainer);

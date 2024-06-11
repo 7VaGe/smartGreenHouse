@@ -15,19 +15,16 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Date;
 import java.util.LinkedList;
-
-
+import java.util.Objects;
 
 public class ServerService extends AbstractVerticle {
     private final int port;
-    private static final int MAX_SIZE = 10;//Numero massimo di rilevamenti.
+    private static final int MAX_SIZE = 10; // Numero massimo di rilevamenti
     private final LinkedList<DataPoint> values;
-
 
     public ServerService(int port) {
         values = new LinkedList<>();
         this.port = port;
-
     }
 
     public void start() {
@@ -37,7 +34,8 @@ public class ServerService extends AbstractVerticle {
         router.get("/api/data").handler(this::handleGetData);
 
         router.route("/").handler(routingContext -> {
-            vertx.fileSystem().readFile("resources/index.html", result -> {
+            String filePath = Objects.requireNonNull(getClass().getClassLoader().getResource("index.html")).getPath();
+            vertx.fileSystem().readFile(filePath, result -> {
                 if (result.succeeded()) {
                     routingContext.response()
                             .putHeader("content-type", "text/html")
@@ -50,50 +48,54 @@ public class ServerService extends AbstractVerticle {
             });
         });
 
+        // Configura il SockJS handler e l'EventBus bridge
+        SockJSHandler sockJSHandler = SockJSHandler.create(vertx);
+        SockJSBridgeOptions options = new SockJSBridgeOptions()
+                .addOutboundPermitted(new PermittedOptions().setAddress("dataUpdate"))
+                .addOutboundPermitted(new PermittedOptions().setAddress("ErogationStop.new"))
+                .addOutboundPermitted(new PermittedOptions().setAddress("manualValue.new"));
+        sockJSHandler.bridge(options);
+        router.route("/eventbus/*").handler(sockJSHandler);
+
         vertx
                 .createHttpServer()
                 .requestHandler(router)
                 .listen(port);
-        router.route().failureHandler(this::handleFailure);
-        /*
-         * WEbsocket per aggiornamento delle rilevazioni.
-         *
-         * */
-        SockJSHandler sockJSHandler = SockJSHandler.create(vertx);
-        //Creo i ponti per le mie websocket
-        SockJSBridgeOptions options = new SockJSBridgeOptions()
-                .addOutboundPermitted(new PermittedOptions().setAddress("dataUpdate"))
-                //.addOutboundPermitted(new PermittedOptions().setAddress("ErogationStop.new"))
-                ;
-        sockJSHandler.bridge(options);
 
-        router.route("/api/data").handler(sockJSHandler);
+        router.route().failureHandler(this::handleFailure);
+
         log("Ready.");
 
         InetAddress ip;
         try {
             ip = InetAddress.getLocalHost();
-            log("Your current IP address : " + ip); //l'indirizzo che mi serve da inseriere su arduino ide ESP
+            log("Your current IP address : " + ip);
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
 
-        /*vertx.eventBus().consumer("ErogationStop.new", msg -> {
+        vertx.eventBus().consumer("ErogationStop.new", msg -> {
             JsonObject jsonObject = (JsonObject) msg.body();
             vertx.eventBus().publish("dataUpdate", jsonObject);
-        });*/
+        });
+
+        vertx.eventBus().consumer("manualValue.new", msg -> {
+            JsonObject jsonObject = (JsonObject) msg.body();
+            vertx.eventBus().publish("dataUpdate", jsonObject);
+        });
     }
 
     private void handleFailure(RoutingContext routingContext) {
+        log("Handling failure: " + routingContext.failure());
         routingContext.response()
                 .putHeader("Content-type", "application/json; charset=utf-8")
                 .setStatusCode(500)
-                .end("[SERVER] | Internal  error");
+                .end("[SERVER] | Internal error: " + routingContext.failure().getMessage());
     }
 
     private void handleGetData(RoutingContext routingContext) {
         JsonArray arr = new JsonArray();
-        for (DataPoint p: values) {
+        for (DataPoint p : values) {
             JsonObject data = new JsonObject();
             data.put("time", p.getTime());
             data.put("value", p.getValue());
@@ -107,7 +109,7 @@ public class ServerService extends AbstractVerticle {
 
     private void handleAddNewData(RoutingContext routingContext) {
         HttpServerResponse response = routingContext.response();
-        JsonObject res =  routingContext.body().asJsonObject();
+        JsonObject res = routingContext.body().asJsonObject();
         if (res == null) {
             sendError(400, response);
         } else {
@@ -118,13 +120,13 @@ public class ServerService extends AbstractVerticle {
                     .put("value", value)
                     .put("time", time)
                     .put("place", place);
-            vertx.eventBus().publish("data.new",event);
+            vertx.eventBus().publish("data.new", event);
 
             values.addFirst(new DataPoint(value, time, place));
             if (values.size() > MAX_SIZE) {
                 values.removeLast();
             }
-            updateData(time,value,place);
+            updateData(time, value, place);
             log("New value: " + value + " from " + place + " on " + new Date(time));
             response.setStatusCode(200).end();
         }
@@ -136,13 +138,13 @@ public class ServerService extends AbstractVerticle {
 
     private void updateData(long time, double value, String place) {
         JsonObject update = new JsonObject()
-                .put("time",time)
+                .put("time", time)
                 .put("value", value)
                 .put("place", place);
-        vertx.eventBus().publish("dataUpdate", update);
-    }
-    private void log(String string) {
-        System.out.println("[SERVER] | "+ string);
+        vertx.eventBus().publish("/api/data", update);
     }
 
+    private void log(String string) {
+        System.out.println("[SERVER] | " + string);
+    }
 }

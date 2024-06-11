@@ -72,17 +72,24 @@ Prima implementazione websocket e richieste AJAX periodiche per ricevere i dati 
 Seconda implementazione rimuovendo le richieste AJAX periodiche e sfruttando le WebSocket dove in tempo reale consentono l'aggiornamento della mia pagina web.
 
 -->
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Real-time Data Visualization</title>
+    <!-- Include sockjs-client -->
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.5.1/dist/sockjs.min.js"></script>
+    <!-- Include vertx-eventbus-client -->
     <script src="https://cdn.jsdelivr.net/npm/vertx3-eventbus-client/vertx-eventbus.min.js"></script>
 </head>
 <body>
 <div id="data-container"></div>
 
 <script>
+    console.log("sockjs-client loaded:", typeof SockJS !== 'undefined');
+    console.log("vertx-eventbus-client loaded:", typeof EventBus !== 'undefined');
+
     document.addEventListener("DOMContentLoaded", function() {
         var eb = new EventBus('/eventbus');
         eb.onopen = function() {
@@ -94,6 +101,9 @@ Seconda implementazione rimuovendo le richieste AJAX periodiche e sfruttando le 
                     updatePage([message.body]);
                 }
             });
+        };
+        eb.onerror = function(err) {
+            console.error("EventBus error:", err);
         };
     });
 
