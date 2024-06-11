@@ -31,10 +31,7 @@ void Automatic::tick(){
        Msg* msg = MsgService.receiveMsg();
       String comunicazione = msg->getContent();
         // Debug: stampa il messaggio ricevuto
-      Serial.print("[DEBUG] | Messaggio ricevuto: ");
-      Serial.println(comunicazione);
-
-      if (comunicazione.length() > 1) {
+      
         String head = comunicazione.substring(0, 1);
         String appoggio = comunicazione.substring(1);
         
@@ -42,11 +39,11 @@ void Automatic::tick(){
         char usable[2];
         head.toCharArray(usable, 2);
         
-        // Debug: stampa l'intestazione e il messaggio di appoggio
+        /* Debug: stampa l'intestazione e il messaggio di appoggio
         Serial.print("[DEBUG] | Intestazione: ");
         Serial.println(usable[0]);
         Serial.print("[DEBUG] | Appoggio: ");
-        Serial.println(appoggio);
+        Serial.println(appoggio);*/
         // Invia il messaggio via Bluetooth
         MsgBT.sendMsg(Msg(appoggio));
           switch(usable[0]){
@@ -75,9 +72,7 @@ void Automatic::tick(){
               Pump->setAngle(PORTATA_MAX);
               break;
             }
-        }  else {
-        MsgService.sendMsg("[ERROR] | Messaggio troppo corto");
-      }
+        
       delete msg;
     }
   }
