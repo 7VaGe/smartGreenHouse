@@ -24,6 +24,8 @@ void Automatic::tick(){
       String msgFromBT = msg->getContent(); 
       if(msgFromBT =="B" && proxy->getDistance()<DIST){
         MsgService.sendMsg("B");
+      }else{
+        MsgBT.sendMsg(Msg(BTCLOSE));
       }
       delete msg;
     }

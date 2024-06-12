@@ -11,10 +11,10 @@
 #define PORTATA_MIN 1000
 #define PORTATA_MED 1600
 #define PORTATA_MAX 2200
-#define PUMP_MAX 2200.00
-#define PUMP_CLOSE 800.00
-#define VAL_START 0.00
-#define VAL_STOP 100.00
+#define PUMP_MAX 2200
+#define PUMP_CLOSE 800
+#define VAL_START 0
+#define VAL_STOP 100
 
 #define POMPA 9
 #define TRIG 11
@@ -33,5 +33,6 @@
 #define HMANUAL 'm'
 #define HAUTO 'a'
 #define HTrace 'r'
+#define BTCLOSE "z"
 
 #endif

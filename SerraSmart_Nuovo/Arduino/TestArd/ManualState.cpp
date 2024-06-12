@@ -35,24 +35,28 @@ void ManualState::tick(){
       MsgService.sendMsg("A");
       this->ledManual->switchOff();
       pState->setAutomatico();
+      MsgBT.sendMsg(Msg(BTCLOSE));
     }
     if(MsgService.isMsgAvailable()){ 
        Msg* msg = MsgService.receiveMsg();
        String comunicazione = msg->getContent();
        String head = comunicazione.substring(0,1);
+       char pivot = head[0];
        appoggio = comunicazione.substring(1);
-       double temp = appoggio.toDouble();
-       temp = mapPump(temp,VAL_START,VAL_STOP,PUMP_CLOSE,PUMP_MAX);
-       if(head==HAUTO){
-          pState->setAutomatico();
-          this->ledManual->switchOff();
-       }
-       if(head==HTrace){
-          MsgBT.sendMsg(Msg(appoggio));
-       }
-       if(head==HPumpServo){
-          this->ledPump->setIntensity(temp);
-          Pump->setAngle(temp);
+       switch (pivot){
+            case HAUTO:
+                pState->setAutomatico();
+                this->ledManual->switchOff();
+              break;
+              case HTrace:
+                MsgBT.sendMsg(Msg(appoggio));
+              break;
+              case HPumpServo:
+                int temp = atoi(appoggio.c_str());
+                temp = map(temp,VAL_START,VAL_STOP,PUMP_CLOSE,PUMP_MAX);
+                this->ledPump->setIntensity(temp);
+                Pump->setAngle(temp);
+              break;
        }
     }
   }
