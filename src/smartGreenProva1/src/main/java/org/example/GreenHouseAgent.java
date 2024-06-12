@@ -67,9 +67,9 @@ public class GreenHouseAgent extends BasicEventLoopController {
                         if (ev instanceof MsgEventFromSerial) {
                             if (((MsgEventFromSerial) ev).getHeader(((MsgEventFromSerial) ev).getMsg()) == 'A') {
                                 currentState = State.AUTOMATIC;
+                                msgService.sendMsg(BLUETOOTHCHANGESTATEAUTO);
                             } else {
                                 //Se ha l'header B prendi i restanti caratteri e invia il valore ad arduino.
-                                /*String msgFromSerialWithoutHeader = ((MsgEventFromSerial) ev).getMsg().substring(1);*/
                                 System.out.println("[SERIALE MANUALE] | RICEVUTO DA ARDUINO: "+((MsgEventFromSerial) ev).getMsg());
                                 msgService.sendMsg(PUMPHANDLER + ((MsgEventFromSerial) ev).getMsg());
 

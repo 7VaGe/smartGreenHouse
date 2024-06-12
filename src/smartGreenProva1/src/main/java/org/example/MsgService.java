@@ -25,8 +25,8 @@ public class MsgService extends Observable{
             while (true) {
                 try {
                     String msg = channel.receiveMsg();
-                    System.out.println("[MSG SERVICE] - Received "+ msg);
-                    this.notifyEvent(new MsgEventFromSerial(msg)); //ho impostato il messaggio come stringa e non evento messaggio
+                     System.out.println("[MSG SERVICE] - Received "+ msg);
+                    this.notifyEvent(new MsgEventFromSerial(msg));
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
