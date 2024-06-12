@@ -30,6 +30,7 @@ void ManualState::tick(){
       Msg* msgBt = MsgBT.receiveMsg();
       appoggio = msgBt->getContent();
       MsgService.sendMsg(appoggio);
+      delete msgBt;
     }
     if(proxy->getDistance()>DIST){
       MsgService.sendMsg("A");
@@ -58,6 +59,7 @@ void ManualState::tick(){
               Pump->setAngle(temp);
               break;
        }
+       delete msg;
     }
   }
 }
