@@ -29,6 +29,8 @@ public class GreenHouseAgent extends BasicEventLoopController {
     private static final char PCLOSE= 'f';
     private static final String BLUETOOTHCHANGESTATEMANUAL= "m";
     private static final String BLUETOOTHCHANGESTATEAUTO= "a";
+    private static final String BYPASSARDUINO = "r";
+    private static final String PUMPHANDLER = "p";
    // private static final double ZERO = 0.00;
     private String oldMsgWitholdValue = "";
     private final ObservableTimer timer;
@@ -69,7 +71,8 @@ public class GreenHouseAgent extends BasicEventLoopController {
                                 //Se ha l'header B prendi i restanti caratteri e invia il valore ad arduino.
                                 /*String msgFromSerialWithoutHeader = ((MsgEventFromSerial) ev).getMsg().substring(1);*/
                                 System.out.println("[SERIALE MANUALE] | RICEVUTO DA ARDUINO: "+((MsgEventFromSerial) ev).getMsg());
-                                msgService.sendMsg(((MsgEventFromSerial) ev).getMsg());
+                                msgService.sendMsg(PUMPHANDLER + ((MsgEventFromSerial) ev).getMsg());
+
                                 double value = Double.parseDouble(((MsgEventFromSerial) ev).getMsg());
                                 String place = "Bluetooth";
                                 long time = System.currentTimeMillis();
@@ -77,13 +80,12 @@ public class GreenHouseAgent extends BasicEventLoopController {
                                         .put("value", value)
                                         .put("time", time)
                                         .put("place", place);
-                                eventBus.publish("/api/data", newDataFromSerial);
+                                eventBus.publish("dataUpdate", newDataFromSerial);
                             }
                         } else if (ev instanceof MsgEventFromWifi) {
                             //messaggio da wifi se è in manuale, cosa fare.
                             double msgFromWifi = Double.parseDouble((((MsgEventFromWifi) ev).getMsg()));
-                            //ulteriore problema in modalità manuale, continuiamo a inviare i valori ricevuti da wifi e questo reimposta la pompa ogni volta con un valore che non è quello impostato da telefono.
-                            //msgService.sendMsg(String.valueOf(msgFromWifi));
+                            msgService.sendMsg(BYPASSARDUINO + msgFromWifi);
                         }
                         break;
                     case AUTOMATIC:
@@ -95,7 +97,7 @@ public class GreenHouseAgent extends BasicEventLoopController {
                                     .put("value", value)
                                     .put("time", time)
                                     .put("place", place);
-                            eventBus.publish("/api/data", msg);
+                            eventBus.publish("dataUpdate", msg);
                             System.out.println("[TICK] | Arrivato a: "+System.currentTimeMillis());
                             msgContainer = PCLOSE+String.valueOf(msgFromWifiEventBridge);
                             msgService.sendMsg(msgContainer);
