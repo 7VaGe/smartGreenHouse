@@ -44,18 +44,18 @@ void ManualState::tick(){
        char pivot = head[0];
        appoggio = comunicazione.substring(1);
        switch (pivot){
-            case HAUTO:
-                pState->setAutomatico();
-                this->ledManual->switchOff();
+          case HAUTO:
+              pState->setAutomatico();
+              this->ledManual->switchOff();
               break;
-              case HTrace:
-                MsgBT.sendMsg(Msg(appoggio));
+          case HTrace:
+              MsgBT.sendMsg(Msg(appoggio));
               break;
-              case HPumpServo:
-                int temp = atoi(appoggio.c_str());
-                temp = map(temp,VAL_START,VAL_STOP,PUMP_CLOSE,PUMP_MAX);
-                this->ledPump->setIntensity(temp);
-                Pump->setAngle(temp);
+          case HPumpServo:
+              int temp = atoi(appoggio.c_str());
+              temp = map(temp,VAL_START,VAL_STOP,PUMP_CLOSE,PUMP_MAX);
+              this->ledPump->setIntensity(temp);
+              Pump->setAngle(temp);
               break;
        }
     }
