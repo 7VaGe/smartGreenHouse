@@ -48,6 +48,7 @@ void ManualState::tick(){
           case HAUTO:
               pState->setAutomatico();
               this->ledManual->switchOff();
+              MsgBT.sendMsg(Msg(BTCLOSE));
               break;
           case HTrace:
               MsgBT.sendMsg(Msg(appoggio));
