@@ -34,5 +34,6 @@
 #define HAUTO 'a'
 #define HTrace 'r'
 #define BTCLOSE "z"
+#define BTOPEN "o"
 
 #endif

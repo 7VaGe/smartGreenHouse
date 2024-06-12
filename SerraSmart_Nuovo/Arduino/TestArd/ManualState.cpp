@@ -38,7 +38,7 @@ void ManualState::tick(){
       pState->setAutomatico();
       MsgBT.sendMsg(Msg(BTCLOSE));
     }
-    if(MsgService.isMsgAvailable()){ 
+    if(MsgService.isMsgAvailable()){
        Msg* msg = MsgService.receiveMsg();
        String comunicazione = msg->getContent();
        String head = comunicazione.substring(0,1);
