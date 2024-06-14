@@ -73,7 +73,7 @@ public class SerialCommChannel implements CommChannel, SerialPortEventListener {
             }
             try {
                 synchronized (serialPort) {
-                   // System.out.println("[SERIAL] | Invio: "+ (Arrays.toString(bytes)));
+                    System.out.println("[SERIAL] | Invio: "+ (Arrays.toString(bytes)));
                     serialPort.writeBytes(bytes);
                 }
             } catch(Exception ex){

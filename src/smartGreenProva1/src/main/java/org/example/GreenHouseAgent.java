@@ -84,8 +84,8 @@ public class GreenHouseAgent extends BasicEventLoopController {
                             }
                         } else if (ev instanceof MsgEventFromWifi) {
                             //messaggio da wifi se è in manuale, cosa fare.
-                            double msgFromWifi = Double.parseDouble((((MsgEventFromWifi) ev).getMsg()));
-                            msgService.sendMsg(BYPASSARDUINO + msgFromWifi);
+                            //double msgFromWifi = Double.parseDouble((((MsgEventFromWifi) ev).getMsg()));
+                            msgService.sendMsg(BYPASSARDUINO + (((MsgEventFromWifi) ev).getMsg()));
                         }
                         break;
                     case AUTOMATIC:
@@ -108,10 +108,10 @@ public class GreenHouseAgent extends BasicEventLoopController {
                             if (Objects.equals(((MsgEventFromSerial) ev).getMsg(), String.valueOf('B'))) {
                                 currentState = State.MANUAL;
                                 msgService.sendMsg(BLUETOOTHCHANGESTATEMANUAL+ msgFromWifiEventBridge);
-                            } else if (Objects.equals(((MsgEventFromSerial) ev).getMsg(), String.valueOf('A'))) {
+                            } /*else if (Objects.equals(((MsgEventFromSerial) ev).getMsg(), String.valueOf('A'))) {
                                 currentState = State.AUTOMATIC;
                                 msgService.sendMsg(BLUETOOTHCHANGESTATEAUTO+ msgFromWifiEventBridge);
-                            }
+                            }*/
                         }else if (ev instanceof MsgEventFromWifi) {
                             //messaggio da wifi se è in automatico, cosa fare.
                             String newMsg = ((MsgEventFromWifi) ev).getMsg();
