@@ -28,8 +28,13 @@ void ManualState::tick(){
     //al momento anche se io invio un valore non viene eseguito sulla pompa.
     if(MsgBT.isMsgAvailable()){
       Msg* msgBt = MsgBT.receiveMsg();
-      appoggio = msgBt->getContent();
-      MsgService.sendMsg(appoggio);
+      String appoggio = msgBt->getContent();
+      if(appoggio.length()>0){
+        MsgService.sendMsg(appoggio);
+        }else {
+          Serial.println("[DEBUG] | Messiaggio BT vuoto ricevuto");
+        }
+      
       delete msgBt;
     }
     if(proxy->getDistance()>DIST){
@@ -41,9 +46,10 @@ void ManualState::tick(){
     if(MsgService.isMsgAvailable()){
        Msg* msg = MsgService.receiveMsg();
        String comunicazione = msg->getContent();
+       if (comunicazione.length()>0) {
        String head = comunicazione.substring(0,1);
        char pivot = head[0];
-       appoggio = comunicazione.substring(1);
+       String rim = comunicazione.substring(1,5);
        switch (pivot){
           case HAUTO:
               pState->setAutomatico();
@@ -51,15 +57,18 @@ void ManualState::tick(){
               MsgBT.sendMsg(Msg(BTCLOSE));
               break;
           case HTrace:
-              MsgBT.sendMsg(Msg(appoggio));
+              MsgBT.sendMsg(Msg(rim));
               break;
           case HPumpServo:
-              int temp = atoi(appoggio.c_str());
+              int temp = atoi(rim.c_str());
               temp = map(temp,VAL_START,VAL_STOP,PUMP_CLOSE,PUMP_MAX);
               this->ledPump->setIntensity(temp);
               Pump->setAngle(temp);
               break;
-       }
+       }}
+      else {
+        Serial.println("[DEBUG] Messaggio vuoto ricevuto da MsgService");
+      }
        delete msg;
     }
   }

@@ -35,5 +35,6 @@
 #define HTrace 'r'
 #define BTCLOSE "z"
 #define BTOPEN "o"
+#define BTDEBUG "Prova"
 
 #endif

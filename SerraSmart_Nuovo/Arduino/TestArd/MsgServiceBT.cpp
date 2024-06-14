@@ -12,7 +12,11 @@ void MsgServiceBT::init(){
 }
 
 bool MsgServiceBT::sendMsg(Msg msg){
-  channel->println(msg.getContent());  
+  if(msg.getContent().length()>0){
+    channel->println(msg.getContent());
+    return true;
+  }else{return false;}
+  
 }
 
 Msg* MsgServiceBT::receiveMsg(){

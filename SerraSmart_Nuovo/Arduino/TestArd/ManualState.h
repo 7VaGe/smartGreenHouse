@@ -22,8 +22,6 @@ public:
   void tick();
   double mapPump(double val, double valInMin, double valInMax, double valOutMin, double valOutMax);
   
-private:
-  String appoggio;
   
 };
 
