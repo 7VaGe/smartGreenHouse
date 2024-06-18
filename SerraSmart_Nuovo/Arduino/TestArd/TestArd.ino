@@ -27,11 +27,11 @@ void setup() {
   Led* ledPump = new Led(LEDp);
 
   Task* t0 = new Automatic(ledAuto, ledPump, proxy, pState, Pump);
-  t0->init(100);
+  t0->init(50);
   sched.addTask(t0);
  
   Task* t1 = new ManualState(ledManual, ledPump, proxy, pState, Pump);
-  t1->init(100);
+  t1->init(25);
   sched.addTask(t1);
 
   Pump->setAngle(800);

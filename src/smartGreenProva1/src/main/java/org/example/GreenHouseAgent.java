@@ -117,31 +117,31 @@ public class GreenHouseAgent extends BasicEventLoopController {
                             String newMsg = ((MsgEventFromWifi) ev).getMsg();
                             double msgFromWifi = Double.parseDouble(newMsg);
                             msgFromWifiEventBridge = msgFromWifi;
-                           // msgService.sendMsg(newMsg);
-                            if (Objects.equals(oldMsgWitholdValue, newMsg)){
+                            // msgService.sendMsg(newMsg);
+                            if (Objects.equals(oldMsgWitholdValue, newMsg)) {
                                 //lancia timer
-                                if(!timerIsAlive && pumpState){
+                                if (!timerIsAlive && pumpState) {
                                     timer.start(5000);
-                                    System.out.println("[TIMER] | Partito a: "+ System.currentTimeMillis());
+                                    System.out.println("[TIMER] | Partito a: " + System.currentTimeMillis());
                                     timerIsAlive = true;
                                 }
                                 oldMsgWitholdValue = newMsg;
-                            }  else {
+                            } else {
                                 //se i messaggi sono diversi e
                                 //se c'è un timer lo chiudi
-                                if(timerIsAlive){
-                                    System.out.println("[TIMER] | Fermato a: "+System.currentTimeMillis());
+                                if (timerIsAlive) {
+                                    System.out.println("[TIMER] | Fermato a: " + System.currentTimeMillis());
                                     timer.stop();
                                     timerIsAlive = false;
-                                    System.out.println("[TIMER] | Spengo Timer" );
+                                    System.out.println("[TIMER] | Spengo Timer");
                                 }
                                 if (msgFromWifi > (UMIN + DELTA)) {
-                                    msgContainer = PCLOSE+String.valueOf(msgFromWifi);
+                                    msgContainer = PCLOSE + String.valueOf(msgFromWifi);
                                     msgService.sendMsg(msgContainer);
                                     pumpState = false;
                                 } else if ((msgFromWifi <= (UMIN + DELTA)) && (msgFromWifi >= UMED)) {
                                     //Se è minore di 35 e maggiore di 20 mandi PMIN
-                                    msgContainer = PMIN+String.valueOf(msgFromWifi);
+                                    msgContainer = PMIN + String.valueOf(msgFromWifi);
                                     msgService.sendMsg(msgContainer);
                                     pumpState = true;
                                 } else if ((msgFromWifi < UMED) && (msgFromWifi >= UMAX)) {
@@ -151,14 +151,13 @@ public class GreenHouseAgent extends BasicEventLoopController {
                                     pumpState = true;
                                 } else {
                                     //Se è minore di 10 e maggiore di 0 mandi PMAX
-                                    msgContainer =  PMAX + String.valueOf(msgFromWifi);
+                                    msgContainer = PMAX + String.valueOf(msgFromWifi);
                                     msgService.sendMsg(msgContainer);
-                                    pumpState= true;
+                                    pumpState = true;
                                 }
                                 oldMsgWitholdValue = newMsg;
                             }
-                        }
-                        break;
+                        }//break;
                 }
         }catch(Exception e){
             e.printStackTrace();

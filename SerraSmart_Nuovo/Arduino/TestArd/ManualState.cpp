@@ -2,6 +2,7 @@
 #include "define.h"
 #include "MsgService.h"
 #include "MsgServiceBT.h"
+#include <Arduino.h>
 
 
 ManualState::ManualState(Led* ledManual, Led* ledPump, Sonar* proxy, ShareState* pState, ServoIdrante* Pump){
@@ -49,7 +50,7 @@ void ManualState::tick(){
        if (comunicazione.length()>0) {
        String head = comunicazione.substring(0,1);
        char pivot = head[0];
-       String rim = comunicazione.substring(1,5);
+       String rim = comunicazione.substring(1);
        switch (pivot){
           case HAUTO:
               pState->setAutomatico();
@@ -65,8 +66,8 @@ void ManualState::tick(){
               this->ledPump->setIntensity(temp);
               Pump->setAngle(temp);
               break;
-       }}
-      else {
+        }
+      }else {
         Serial.println("[DEBUG] Messaggio vuoto ricevuto da MsgService");
       }
        delete msg;
