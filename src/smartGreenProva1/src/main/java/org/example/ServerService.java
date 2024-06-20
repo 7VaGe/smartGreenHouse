@@ -8,16 +8,17 @@ import io.vertx.ext.bridge.PermittedOptions;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
+import io.vertx.ext.web.handler.CorsHandler;
 import io.vertx.ext.web.handler.sockjs.SockJSBridgeOptions;
 import io.vertx.ext.web.handler.sockjs.SockJSHandler;
-
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Date;
 import java.util.LinkedList;
-import java.util.Objects;
+
 
 public class ServerService extends AbstractVerticle {
+
     private final int port;
     private static final int MAX_SIZE = 10; // Numero massimo di rilevamenti
     private final LinkedList<DataPoint> values;
@@ -29,13 +30,42 @@ public class ServerService extends AbstractVerticle {
 
     public void start() {
         Router router = Router.router(vertx);
+
+        // CORS Configuration
+        router.route().handler(CorsHandler.create("http://192.168.1.12:8080")
+                .allowCredentials(true)
+                .allowedMethod(io.vertx.core.http.HttpMethod.GET)
+                .allowedMethod(io.vertx.core.http.HttpMethod.POST)
+                .allowedMethod(io.vertx.core.http.HttpMethod.OPTIONS)
+                .allowedHeader("Access-Control-Allow-Method")
+                .allowedHeader("Access-Control-Allow-Origin")
+                .allowedHeader("Access-Control-Allow-Credentials")
+                .allowedHeader("Content-Type"));
+
+        vertx.createHttpServer()
+                .requestHandler(router)
+                .listen(port);
+
+        router.route().failureHandler(this::handleFailure);
+
+        PermittedOptions permittedOptions = new PermittedOptions()
+                .setAddress("dataUpdate")
+                .setAddress("ErogationStop.new")
+                .setAddress("manualValue.new");
+
+        SockJSHandler sockJSHandler = SockJSHandler.create(vertx);
+        SockJSBridgeOptions options = new SockJSBridgeOptions()
+                .addOutboundPermitted(permittedOptions)
+                .addInboundPermitted(permittedOptions);
+        sockJSHandler.bridge(options);
+        router.route("/eventbus/*").handler(sockJSHandler);
+
         router.route().handler(BodyHandler.create());
         router.post("/api/data").handler(this::handleAddNewData);
         router.get("/api/data").handler(this::handleGetData);
 
-        router.route("/").handler(routingContext -> {
-            String filePath = Objects.requireNonNull(getClass().getClassLoader().getResource("index.html")).getPath();
-            vertx.fileSystem().readFile(filePath, result -> {
+        router.route().handler(routingContext -> {
+            vertx.fileSystem().readFile("index.html", result -> {
                 if (result.succeeded()) {
                     routingContext.response()
                             .putHeader("content-type", "text/html")
@@ -47,22 +77,6 @@ public class ServerService extends AbstractVerticle {
                 }
             });
         });
-
-        // Configura il SockJS handler e l'EventBus bridge
-        SockJSHandler sockJSHandler = SockJSHandler.create(vertx);
-        SockJSBridgeOptions options = new SockJSBridgeOptions()
-                .addOutboundPermitted(new PermittedOptions().setAddress("dataUpdate"))
-                .addOutboundPermitted(new PermittedOptions().setAddress("ErogationStop.new"))
-                .addOutboundPermitted(new PermittedOptions().setAddress("manualValue.new"));
-        sockJSHandler.bridge(options);
-        router.route("/eventbus/*").handler(sockJSHandler);
-
-        vertx
-                .createHttpServer()
-                .requestHandler(router)
-                .listen(port);
-
-        router.route().failureHandler(this::handleFailure);
 
         log("Ready.");
 
@@ -141,7 +155,7 @@ public class ServerService extends AbstractVerticle {
                 .put("time", time)
                 .put("value", value)
                 .put("place", place);
-        vertx.eventBus().publish("/api/data", update);
+        vertx.eventBus().publish("/dataUpdate", update);
     }
 
     private void log(String string) {

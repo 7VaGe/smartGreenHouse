@@ -1,9 +1,4 @@
 <!DOCTYPE html>
-
-
-
-<!--
-
 Prima implementazione websocket e richieste AJAX periodiche per ricevere i dati aggiornati.
 
 <html lang="en">
@@ -68,19 +63,19 @@ Prima implementazione websocket e richieste AJAX periodiche per ricevere i dati 
 </script>
 </body>
 </html>
-
+<!--
 Seconda implementazione rimuovendo le richieste AJAX periodiche e sfruttando le WebSocket dove in tempo reale consentono l'aggiornamento della mia pagina web.
 
--->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Real-time Data Visualization</title>
-    <!-- Include sockjs-client -->
+     Include sockjs-client
     <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.5.1/dist/sockjs.min.js"></script>
-    <!-- Include vertx-eventbus-client -->
+     Include vertx-eventbus-client
     <script src="https://cdn.jsdelivr.net/npm/vertx3-eventbus-client/vertx-eventbus.min.js"></script>
 </head>
 <body>
@@ -91,13 +86,15 @@ Seconda implementazione rimuovendo le richieste AJAX periodiche e sfruttando le 
     console.log("vertx-eventbus-client loaded:", typeof EventBus !== 'undefined');
 
     document.addEventListener("DOMContentLoaded", function() {
-        var eb = new EventBus('/eventbus');
+        var eb = new EventBus('http://192.168.1.12:8080/eventbus');
+        console.log("sei dentro EVENTBUS: ");
         eb.onopen = function() {
-            console.log('Connected to EventBus');
-            eb.registerHandler('dataUpdate', function(error, message) {
+            console.log('Connected to EventBus', eb);
+            eb.registerHandler('api/data', function(error, message) {
                 if (error) {
                     console.error(error);
                 } else {
+                    console.log('received a message: ' + JSON.stringify(message));
                     updatePage([message.body]);
                 }
             });
@@ -109,6 +106,7 @@ Seconda implementazione rimuovendo le richieste AJAX periodiche e sfruttando le 
 
     // Funzione per aggiornare la pagina con i nuovi dati
     function updatePage(data) {
+    console.log("DATI: ", data);
         const dataContainer = document.getElementById('data-container');
         data.forEach(item => {
             const newDataHtml = `
@@ -124,3 +122,4 @@ Seconda implementazione rimuovendo le richieste AJAX periodiche e sfruttando le 
 </script>
 </body>
 </html>
+-->

@@ -9,6 +9,7 @@ public class RunServer extends AbstractVerticle {
         Vertx vertx = Vertx.vertx();
         EventBus eventBus = vertx.eventBus();
 
+
         ServerService service = new ServerService(8080);
         vertx.deployVerticle(service);
 

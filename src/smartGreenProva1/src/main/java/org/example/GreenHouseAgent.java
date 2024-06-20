@@ -80,7 +80,7 @@ public class GreenHouseAgent extends BasicEventLoopController {
                                         .put("value", value)
                                         .put("time", time)
                                         .put("place", place);
-                                eventBus.publish("dataUpdate", newDataFromSerial);
+                                eventBus.publish("manualValue.new", newDataFromSerial);
                             }
                         } else if (ev instanceof MsgEventFromWifi) {
                             //messaggio da wifi se è in manuale, cosa fare.
@@ -97,7 +97,7 @@ public class GreenHouseAgent extends BasicEventLoopController {
                                     .put("value", value)
                                     .put("time", time)
                                     .put("place", place);
-                            eventBus.publish("dataUpdate", msg);
+                            eventBus.publish("ErogationStop.new", msg);
                             System.out.println("[TICK] | Arrivato a: "+System.currentTimeMillis());
                             msgContainer = PCLOSE+String.valueOf(msgFromWifiEventBridge);
                             msgService.sendMsg(msgContainer);
