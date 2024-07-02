@@ -5,6 +5,8 @@ import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.json.JsonObject;
 
 import java.util.Objects;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 
 
 public class GreenHouseAgent extends BasicEventLoopController {
@@ -31,12 +33,13 @@ public class GreenHouseAgent extends BasicEventLoopController {
     private static final String BLUETOOTHCHANGESTATEAUTO= "a";
     private static final String BYPASSARDUINO = "r";
     private static final String PUMPHANDLER = "p";
-   // private static final double ZERO = 0.00;
+    private static final String ZERO = "0";
     private String oldMsgWitholdValue = "";
     private final ObservableTimer timer;
     private boolean timerIsAlive = false;
     private boolean pumpState = false;
     private double msgFromWifiEventBridge;
+
 
     public GreenHouseAgent(String port, int rate, EventBus eventBus){
         super();
@@ -48,15 +51,16 @@ public class GreenHouseAgent extends BasicEventLoopController {
         currentState = State.AUTOMATIC;
         this.eventBus = eventBus;
 
+
         eventBus.consumer("data.new", msg -> {
             JsonObject event = (JsonObject) msg.body();
             double value = event.getDouble("value");
             processEvent(new MsgEventFromWifi(Double.toString(value)));
         });
     }
-    public void sendData(String data){
-        msgService.sendMsg(data);
-    }
+//    public void sendData(String data){
+//        msgService.sendMsg(data);
+//    }
 
     @Override
     protected void processEvent(Event ev) {
@@ -71,20 +75,25 @@ public class GreenHouseAgent extends BasicEventLoopController {
                             } else {
                                 //Se ha l'header B prendi i restanti caratteri e invia il valore ad arduino.
                                 System.out.println("[SERIALE MANUALE] | RICEVUTO DA ARDUINO: "+((MsgEventFromSerial) ev).getMsg());
-                                msgService.sendMsg(PUMPHANDLER + ((MsgEventFromSerial) ev).getMsg());
-
-                                double value = Double.parseDouble(((MsgEventFromSerial) ev).getMsg());
-                                String place = "Bluetooth";
-                                long time = System.currentTimeMillis();
-                                JsonObject newDataFromSerial = new JsonObject()
-                                        .put("value", value)
-                                        .put("time", time)
-                                        .put("place", place);
-                                eventBus.publish("manualValue.new", newDataFromSerial);
+                                //se è una notifica di errore, stampala a video e chiudi la pompa.
+                                if(((MsgEventFromSerial) ev).getMsg().startsWith("[ERROR]")){
+                                    //notifico il mio errore a video, e chiudo la pompa
+                                    System.out.println("[ARDUINO] | "+((MsgEventFromSerial) ev).getMsg());
+                                    msgService.sendMsg(ZERO);
+                                  }else{
+                                    //se non è un errore, invia il valore contenuto nel evento msg alla nostra pompa
+                                    msgService.sendMsg(PUMPHANDLER + ((MsgEventFromSerial) ev).getMsg());
+                                    double value = Double.parseDouble(((MsgEventFromSerial) ev).getMsg());
+                                    String place = "Bluetooth";
+                                    long time = System.currentTimeMillis();
+                                    JsonObject newDataFromSerial = new JsonObject()
+                                            .put("value", value)
+                                            .put("time", time)
+                                            .put("place", place);
+                                    eventBus.publish("manualValue.new", newDataFromSerial);
+                                }
                             }
                         } else if (ev instanceof MsgEventFromWifi) {
-                            //messaggio da wifi se è in manuale, cosa fare.
-                            //double msgFromWifi = Double.parseDouble((((MsgEventFromWifi) ev).getMsg()));
                             msgService.sendMsg(BYPASSARDUINO + (((MsgEventFromWifi) ev).getMsg()));
                         }
                         break;

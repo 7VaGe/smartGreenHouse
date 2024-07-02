@@ -86,7 +86,7 @@ public class ServerService extends AbstractVerticle {
             log("Your current IP address : " + ip);
         } catch (UnknownHostException e) {
             e.printStackTrace();
-        }
+        } 
 
         vertx.eventBus().consumer("ErogationStop.new", msg -> {
             JsonObject jsonObject = (JsonObject) msg.body();
