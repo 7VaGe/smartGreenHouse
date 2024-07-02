@@ -5,7 +5,7 @@
 #include <Arduino.h>
 
 
-ManualState::ManualState(Led* ledManual, Led* ledPump, Sonar* proxy, ShareState* pState, ServoIdrante* Pump){
+ManualState::ManualState(Led* ledManual, Led* ledPump, Sonar* proxy, ShareState* pState, ServoPump* Pump){
   this->ledManual = ledManual;
   this->ledPump = ledPump;
   this->proxy = proxy;
@@ -32,7 +32,7 @@ void ManualState::tick(){
       String appoggio = msgBt->getContent();
       if(appoggio.length()>0){
         MsgService.sendMsg(appoggio);
-        }else {
+        }else{
           MsgService.sendMsg("[ERROR] Void bluethoot message");
         }
       

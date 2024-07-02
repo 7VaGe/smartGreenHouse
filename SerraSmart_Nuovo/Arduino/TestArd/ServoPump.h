@@ -1,11 +1,11 @@
-#ifndef __SERVOIDRANTE__
-#define __SERVOIDRANTE__
+#ifndef __SERVOPUMP__
+#define __SERVOPUMP__
 
 #include "ServoTimer2.h"
 
-class ServoIdrante{
+class ServoPump{
   public:
-    ServoIdrante(int pin);
+    ServoPump(int pin);
     void setAngle(int apertura);
     void closeIdrante();
   protected:

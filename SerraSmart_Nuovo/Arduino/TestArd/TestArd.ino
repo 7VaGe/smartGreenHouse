@@ -7,7 +7,7 @@
 #include "ManualState.h"
 #include "Scheduler.h"
 #include "ShareState.h"
-#include "ServoIdrante.h"
+#include "ServoPump.h"
 #include "MsgServiceBT.h"
 
 Scheduler sched;
@@ -19,7 +19,7 @@ void setup() {
   MsgService.init();
   MsgBT.init();
 
-  ServoIdrante* Pump = new ServoIdrante(POMPA);
+  ServoPump* Pump = new ServoPump(POMPA);
   ShareState* pState = new ShareState();
   Sonar* proxy = new Sonar(ECHO, TRIG);
   Led* ledAuto = new Led(LEDa);

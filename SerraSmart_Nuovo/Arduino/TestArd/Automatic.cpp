@@ -4,7 +4,7 @@
 #include "Sonar.h"
 #include "MsgServiceBT.h"
 
-Automatic::Automatic(Led* ledAuto, Led* ledPump, Sonar* proxy, ShareState* pState, ServoIdrante* Pump){
+Automatic::Automatic(Led* ledAuto, Led* ledPump, Sonar* proxy, ShareState* pState, ServoPump* Pump){
   this->ledAuto = ledAuto;
   this->ledPump = ledPump;
   this->proxy = proxy;

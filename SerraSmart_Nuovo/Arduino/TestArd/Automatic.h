@@ -6,7 +6,7 @@
 #include "Sonar.h"
 #include "define.h"
 #include "ShareState.h"
-#include "ServoIdrante.h"
+#include "ServoPump.h"
 
 class Automatic:public Task{
 
@@ -15,9 +15,9 @@ public:
   Led* ledPump;
   Sonar* proxy;
   ShareState* pState;
-  ServoIdrante* Pump;
+  ServoPump* Pump;
   
-  Automatic(Led* ledAuto, Led* ledPump, Sonar* proxy, ShareState* pState, ServoIdrante* Pump);  
+  Automatic(Led* ledAuto, Led* ledPump, Sonar* proxy, ShareState* pState, ServoPump* Pump);  
   void init(int period);  
   void tick();
 
