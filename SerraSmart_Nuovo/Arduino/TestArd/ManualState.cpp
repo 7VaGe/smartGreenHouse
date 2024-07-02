@@ -29,9 +29,9 @@ void ManualState::tick(){
     //al momento anche se io invio un valore non viene eseguito sulla pompa.
     if(MsgBT.isMsgAvailable()){
       Msg* msgBt = MsgBT.receiveMsg();
-      String appoggio = msgBt->getContent();
-      if(appoggio.length()>0){
-        MsgService.sendMsg(appoggio);
+      String append = msgBt->getContent();
+      if(append.length()>0){
+        MsgService.sendMsg(append);
         }else{
           MsgService.sendMsg("[ERROR] Void bluethoot message");
         }
@@ -46,11 +46,11 @@ void ManualState::tick(){
     }
     if(MsgService.isMsgAvailable()){
        Msg* msg = MsgService.receiveMsg();
-       String comunicazione = msg->getContent();
-       if (comunicazione.length()>0) {
-       String head = comunicazione.substring(0,1);
+       String comunication = msg->getContent();
+       if (comunication.length()>0) {
+       String head = comunication.substring(0,1);
        char pivot = head[0];
-       String rim = comunicazione.substring(1);
+       String rim = comunication.substring(1);
        switch (pivot){
           case HAUTO:
               pState->setAutomatico();

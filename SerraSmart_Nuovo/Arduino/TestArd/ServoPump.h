@@ -6,8 +6,8 @@
 class ServoPump{
   public:
     ServoPump(int pin);
-    void setAngle(int apertura);
-    void closeIdrante();
+    void setAngle(int opening);
+    void closePump();
   protected:
     int pin;
     ServoTimer2 Pump;

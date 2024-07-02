@@ -36,15 +36,15 @@ void Automatic::tick(){
     }
     if(MsgService.isMsgAvailable()){
       Msg* msg = MsgService.receiveMsg();
-      String comunicazione = msg->getContent();
-      if (comunicazione.length()>0) {
+      String comunication = msg->getContent();
+      if (comunication.length()>0) {
           // Debug: stampa il messaggio ricevuto      
-          String head = comunicazione.substring(0, 1);
-          String appoggio = comunicazione.substring(1);        
+          String head = comunication.substring(0, 1);
+          String append = comunication.substring(1);        
           // Alloco spazio per il carattere nullo terminatore
           char usable[2];
           head.toCharArray(usable, 2);
-          MsgBT.sendMsg(Msg(appoggio));
+          MsgBT.sendMsg(Msg(append));
             switch(usable[0]){
               case HMANUAL:
                 pState->setManuale();
@@ -53,7 +53,7 @@ void Automatic::tick(){
               case HPclose:
                 this->ledPump->switchOff();
                 //MsgService.sendMsg("[LED] | Chiuso");
-                Pump->closeIdrante();
+                Pump->closePump();
                 break;
               case HPmin:
                 this->ledPump->setIntensity(Pmin);

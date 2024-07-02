@@ -5,10 +5,10 @@ ServoPump::ServoPump(int pin){
   Pump.attach(pin);
 }
 
-void ServoPump::setAngle(int apertura){
-  Pump.write(apertura);
+void ServoPump::setAngle(int opening){
+  Pump.write(opening);
 }
 
-void ServoPump::closeIdrante(){
+void ServoPump::closePump(){
   Pump.write(0);
 }
