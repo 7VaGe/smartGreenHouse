@@ -8,9 +8,9 @@
 #define Pmax 255
 #define DeltaU 5
 
-#define PORTATA_MIN 1000
-#define PORTATA_MED 1600
-#define PORTATA_MAX 2200
+#define CAPACITY_MIN 1000
+#define CAPACITY_MED 1600
+#define CAPACITY_MAX 2200
 #define PUMP_MAX 2200
 #define PUMP_CLOSE 800
 #define VAL_START 0
@@ -35,6 +35,5 @@
 #define HTrace 'r'
 #define BTCLOSE "z"
 #define BTOPEN "o"
-#define BTDEBUG "Prova"
 
 #endif

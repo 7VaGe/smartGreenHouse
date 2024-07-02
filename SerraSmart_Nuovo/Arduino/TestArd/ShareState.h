@@ -4,20 +4,20 @@
 class ShareState {
 
 private:
-  bool automatico;
-  bool manuale;
+  bool automatic;
+  bool manual;
 
 public:
   
   ShareState(){
-    automatico = true;
-    manuale = false;
+    automatic = true;
+    manual = false;
   }
   
-  void setAutomatico() { automatico = true; manuale = false; }
-  void setManuale() { automatico = false; manuale = true;}
-  bool isManuale() { return manuale; }
-  bool isAutomatico() { return automatico; }
+  void setAutomatic() { automatic = true; manual = false; }
+  void setManual() { automatic = false; manual = true;}
+  bool isManual() { return manual; }
+  bool isAutomatic() { return automatic; }
 
 };
 

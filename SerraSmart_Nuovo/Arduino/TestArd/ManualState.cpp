@@ -22,7 +22,7 @@ double ManualState::mapPump(double val, double valInMin, double valInMax, double
 }
 
 void ManualState::tick(){
-  if(pState->isManuale()){
+  if(pState->isManual()){
     this->ledManual->switchOn();
     //va inserito lo stesso controllo, quando invio alla pompa il comando
     //di chiusura cosicchè la pompa smette di erogare, e si ferma.
@@ -34,14 +34,13 @@ void ManualState::tick(){
         MsgService.sendMsg(append);
         }else{
           MsgService.sendMsg("[ERROR] Void bluethoot message");
-        }
-      
+        }     
       delete msgBt;
     }
     if(proxy->getDistance()>DIST){
       MsgService.sendMsg("A");
       this->ledManual->switchOff();
-      pState->setAutomatico();
+      pState->setAutomatic();
       MsgBT.sendMsg(Msg(BTCLOSE));
     }
     if(MsgService.isMsgAvailable()){
@@ -53,7 +52,7 @@ void ManualState::tick(){
        String rim = comunication.substring(1);
        switch (pivot){
           case HAUTO:
-              pState->setAutomatico();
+              pState->setAutomatic();
               this->ledManual->switchOff();
               MsgBT.sendMsg(Msg(BTCLOSE));
               break;
