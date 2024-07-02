@@ -33,7 +33,7 @@ void ManualState::tick(){
       if(appoggio.length()>0){
         MsgService.sendMsg(appoggio);
         }else {
-          Serial.println("[DEBUG] | Messiaggio BT vuoto ricevuto");
+          MsgService.sendMsg("[ERROR] Void bluethoot message");
         }
       
       delete msgBt;
@@ -68,7 +68,7 @@ void ManualState::tick(){
               break;
         }
       }else {
-        Serial.println("[DEBUG] Messaggio vuoto ricevuto da MsgService");
+        MsgService.sendMsg("[ERROR] Void msg from MsgService");
       }
        delete msg;
     }

@@ -30,7 +30,7 @@ void Automatic::tick(){
                 MsgBT.sendMsg(Msg(BTCLOSE));
               }
               }else{
-                  Serial.println("[DEBUG] Messaggio Bluetooth vuoto ricevuto");
+                  MsgService.sendMsg("[ERROR] Void bluethoot message");//[ERROR] Void bluethoot message
               }
               delete msg;
     }
@@ -43,13 +43,7 @@ void Automatic::tick(){
           String appoggio = comunicazione.substring(1);        
           // Alloco spazio per il carattere nullo terminatore
           char usable[2];
-          head.toCharArray(usable, 2);       
-          /* Debug: stampa l'intestazione e il messaggio di appoggio
-          Serial.print("[DEBUG] | Intestazione: ");
-          Serial.println(usable[0]);
-          Serial.print("[DEBUG] | Appoggio: ");
-          Serial.println(appoggio);
-          /*Invia il messaggio via Bluetooth*/
+          head.toCharArray(usable, 2);
           MsgBT.sendMsg(Msg(appoggio));
             switch(usable[0]){
               case HMANUAL:
@@ -76,8 +70,9 @@ void Automatic::tick(){
                 //MsgService.sendMsg("[LED] | Caso 1");
                 Pump->setAngle(PORTATA_MAX);
                 break;
-              }  } else{
-                Serial.println("[DEBUG] Messaggio vuoto ricevuto da MsgService");
+              }  
+             } else{
+                MsgService.sendMsg("[ERROR] Void msg from MsgService");//[ERROR] Void msg from MsgService
               }      
           delete msg;
     }
