@@ -5,6 +5,8 @@
 #include <Arduino.h>
 
 
+
+
 ManualState::ManualState(Led* ledManual, Led* ledPump, Sonar* proxy, ShareState* pState, ServoPump* Pump){
   this->ledManual = ledManual;
   this->ledPump = ledPump;
@@ -45,27 +47,62 @@ void ManualState::tick(){
     }
     if(MsgService.isMsgAvailable()){
        Msg* msg = MsgService.receiveMsg();
-       String comunication = msg->getContent();
-       if (comunication.length()>0) {
-       String head = comunication.substring(0,1);
-       char pivot = head[0];
-       String rim = comunication.substring(1);
-       switch (pivot){
+       String communication = msg->getContent();
+       char header;
+       String firstMsg;
+       if (communication.length()>0) {
+        //può capitare che in comunicazione tu abbia 2 messaggi, invati da server, per 2 eventi distinti che si sono verificati nello stesso istante, o circa
+        //devi trovare la politica adeguata di troncamento dei messaggi, facendo una ricerca per carattere P o R che differenziano i vari messaggi arrivati da server.
+        String headFirstMessage = communication.substring(0,1);
+        String communicationNoHeader= communication.substring(1);
+        int indexSecondMessage;
+        indexSecondMessage =  communicationNoHeader.indexOf(target1);
+        if(indexSecondMessage == -1){
+          indexSecondMessage = communicationNoHeader.indexOf(target2);
+        }
+        if (indexSecondMessage != -1) {
+          String secondMsg = communicationNoHeader.substring(indexSecondMessage+1);
+          String headSecondMessage = communicationNoHeader.substring(indexSecondMessage,(indexSecondMessage + 1));
+          header = headSecondMessage[0];
+          switch (header){
           case HAUTO:
               pState->setAutomatic();
               this->ledManual->switchOff();
               MsgBT.sendMsg(Msg(BTCLOSE));
               break;
           case HTrace:
-              MsgBT.sendMsg(Msg(rim));
+              MsgBT.sendMsg(Msg(secondMsg));
               break;
           case HPumpServo:
-              int temp = atoi(rim.c_str());
+              int temp = atoi(secondMsg.c_str());
               temp = map(temp,VAL_START,VAL_STOP,PUMP_CLOSE,PUMP_MAX);
               this->ledPump->setIntensity(temp);
               Pump->setAngle(temp);
               break;
         }
+        }
+        header = headFirstMessage[0];
+        if(indexSecondMessage != -1){
+           firstMsg = communication.substring(1, indexSecondMessage);
+        }else{
+           firstMsg = communication.substring(1);
+        }      
+        switch (header){
+            case HAUTO:
+                pState->setAutomatic();
+                this->ledManual->switchOff();
+                MsgBT.sendMsg(Msg(BTCLOSE));
+                break;
+            case HTrace:
+                MsgBT.sendMsg(Msg(firstMsg));
+                break;
+            case HPumpServo:
+                int temp = atoi(firstMsg.c_str());
+                temp = map(temp,VAL_START,VAL_STOP,PUMP_CLOSE,PUMP_MAX);
+                this->ledPump->setIntensity(temp);
+                Pump->setAngle(temp);
+                break;
+          }
       }else {
         MsgService.sendMsg("[ERROR] Void msg from MsgService");
       }

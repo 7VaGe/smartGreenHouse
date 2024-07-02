@@ -36,4 +36,6 @@
 #define BTCLOSE "z"
 #define BTOPEN "o"
 
+#define target1 'p'
+#define target2 'r'
 #endif
