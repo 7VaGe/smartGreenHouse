@@ -26,9 +26,7 @@ void Automatic::tick(){
         if(msgFromBT =="B" && proxy->getDistance()<DIST){
           MsgService.sendMsg("B");
           MsgBT.sendMsg(Msg(BTOPEN));
-        }else{
-          MsgBT.sendMsg(Msg(BTCLOSE));
-          }
+        }
       }else{
         MsgService.sendMsg("[ERROR] Void bluethoot message");
       }
