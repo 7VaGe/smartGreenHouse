@@ -33,6 +33,8 @@
 #define HMANUAL 'm'
 #define HAUTO 'a'
 #define HTrace 'r'
+#define OpenPump "op"
+#define ClosePump "cp"
 #define BTCLOSE "z"
 #define BTOPEN "o"
 

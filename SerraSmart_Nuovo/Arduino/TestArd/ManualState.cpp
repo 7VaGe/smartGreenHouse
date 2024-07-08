@@ -72,6 +72,11 @@ void ManualState::tick(){
               temp = map(temp,VAL_START,VAL_STOP,PUMP_CLOSE,PUMP_MAX);
               this->ledPump->setIntensity(temp);
               Pump->setAngle(temp);
+              if(temp == 0){
+                MsgService.sendMsg(ClosePump);
+              }else{
+                MsgService.sendMsg(OpenPump);
+              }
               break;
           }
         }
@@ -95,6 +100,11 @@ void ManualState::tick(){
                 temp = map(temp,VAL_START,VAL_STOP,PUMP_CLOSE,PUMP_MAX);
                 this->ledPump->setIntensity(temp);
                 Pump->setAngle(temp);
+                if(temp == 0){
+                  MsgService.sendMsg(ClosePump);
+                }else{
+                  MsgService.sendMsg(OpenPump);
+                }
                 break;
           }
       }else {

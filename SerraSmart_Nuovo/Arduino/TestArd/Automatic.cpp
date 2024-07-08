@@ -49,22 +49,22 @@ void Automatic::tick(){
             break;
           case HPclose:
             this->ledPump->switchOff();
-            //MsgService.sendMsg("[LED] | Chiuso");
+            MsgService.sendMsg(ClosePump);
             Pump->closePump();
             break;
           case HPmin:
             this->ledPump->setIntensity(Pmin);
             Pump->setAngle(CAPACITY_MIN);
-            //MsgService.sendMsg("[LED] | Caso 3");
+            MsgService.sendMsg(OpenPump);
             break;
           case HPmed:
             this->ledPump->setIntensity(Pmid);
-            //MsgService.sendMsg("[LED] | Caso 2");
+            MsgService.sendMsg(OpenPump);
             Pump->setAngle(CAPACITY_MED);
             break;
           case HPmax:
             this->ledPump->setIntensity(Pmax);
-            //MsgService.sendMsg("[LED] | Caso 1");
+            MsgService.sendMsg(OpenPump);
             Pump->setAngle(CAPACITY_MAX);
             break;
         }  
