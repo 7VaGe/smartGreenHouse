@@ -35,8 +35,7 @@ void Automatic::tick(){
     if(MsgService.isMsgAvailable()){
       Msg* msg = MsgService.receiveMsg();
       String comunication = msg->getContent();
-      if (comunication.length()>0) {
-        // Debug: stampa il messaggio ricevuto      
+      if (comunication.length()>0) {   
         String head = comunication.substring(0, 1);
         String append = comunication.substring(1);        
         // Alloco spazio per il carattere nullo terminatore

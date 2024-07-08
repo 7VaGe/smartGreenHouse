@@ -1,3 +1,4 @@
+
 #include "ManualState.h"
 #include "define.h"
 #include "MsgService.h"
@@ -19,16 +20,9 @@ void ManualState::init(int period){
   Task::init(period);
 }
 
-double ManualState::mapPump(double val, double valInMin, double valInMax, double valOutMin, double valOutMax){
-  return (val-valInMin)*(valOutMax-valOutMin)/(valInMax-valInMin)+valOutMin;
-}
-
 void ManualState::tick(){
   if(pState->isManual()){
     this->ledManual->switchOn();
-    //va inserito lo stesso controllo, quando invio alla pompa il comando
-    //di chiusura cosicchè la pompa smette di erogare, e si ferma.
-    //al momento anche se io invio un valore non viene eseguito sulla pompa.
     if(MsgBT.isMsgAvailable()){
       Msg* msgBt = MsgBT.receiveMsg();
       String append = msgBt->getContent();
@@ -79,7 +73,7 @@ void ManualState::tick(){
               this->ledPump->setIntensity(temp);
               Pump->setAngle(temp);
               break;
-        }
+          }
         }
         header = headFirstMessage[0];
         if(indexSecondMessage != -1){
