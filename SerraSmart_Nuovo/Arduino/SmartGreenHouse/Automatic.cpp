@@ -51,25 +51,25 @@ void Automatic::tick(){
             pState->setManual();
             this->ledAuto->switchOff();
             break;
-          case HPclose:
+          case HPCLOSE:
             this->ledPump->switchOff();
             Pump->closePump();
-            MsgService.sendMsg(ClosePump);
+            MsgService.sendMsg(CLOSEPUMP);
             break;
           case HPmin:
             this->ledPump->setIntensity(Pmin);
             Pump->setAngle(CAPACITY_MIN);
-            MsgService.sendMsg(OpenPump);
+            MsgService.sendMsg(OPENPUMP);
             break;
           case HPmed:
             this->ledPump->setIntensity(Pmid);
             Pump->setAngle(CAPACITY_MED);
-            MsgService.sendMsg(OpenPump);
+            MsgService.sendMsg(OPENPUMP);
             break;
           case HPmax:
             this->ledPump->setIntensity(Pmax);
             Pump->setAngle(CAPACITY_MAX);
-            MsgService.sendMsg(OpenPump);
+            MsgService.sendMsg(OPENPUMP);
             break;
         }  
       }else{

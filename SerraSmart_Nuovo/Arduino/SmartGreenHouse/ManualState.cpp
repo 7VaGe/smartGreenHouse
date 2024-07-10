@@ -64,18 +64,18 @@ void ManualState::tick(){
               this->ledManual->switchOff();
               MsgBT.sendMsg(Msg(BTCLOSE));
               break;
-          case HTrace:
+          case HTRACE:
               MsgBT.sendMsg(Msg(secondMsg));
               break;
-          case HPumpServo:
+          case HPUMPSERVO:
               int temp = atoi(secondMsg.c_str());
               temp = map(temp,VAL_START,VAL_STOP,PUMP_CLOSE,PUMP_MAX);
               this->ledPump->setIntensity(temp);
               Pump->setAngle(temp);
-              if(temp == 0){
-                MsgService.sendMsg(ClosePump);
+              if(temp == PUMP_CLOSE){
+                MsgService.sendMsg(CLOSEPUMP);
               }else{
-                MsgService.sendMsg(OpenPump);
+                MsgService.sendMsg(OPENPUMP);
               }
               break;
           }
@@ -92,18 +92,18 @@ void ManualState::tick(){
                 this->ledManual->switchOff();
                 MsgBT.sendMsg(Msg(BTCLOSE));
                 break;
-            case HTrace:
+            case HTRACE:
                 MsgBT.sendMsg(Msg(firstMsg));
                 break;
-            case HPumpServo:
+            case HPUMPSERVO:
                 int temp = atoi(firstMsg.c_str());
                 temp = map(temp,VAL_START,VAL_STOP,PUMP_CLOSE,PUMP_MAX);
                 this->ledPump->setIntensity(temp);
                 Pump->setAngle(temp);
-                if(temp == 0){
-                  MsgService.sendMsg(ClosePump);
+                if(temp == PUMP_CLOSE){
+                  MsgService.sendMsg(CLOSEPUMP);
                 }else{
-                  MsgService.sendMsg(OpenPump);
+                  MsgService.sendMsg(OPENPUMP);
                 }
                 break;
           }

@@ -8,7 +8,7 @@ MsgServiceBT::MsgServiceBT(int rxPin, int txPin){
 
 void MsgServiceBT::init(){ 
   content.reserve(256);
-  channel->begin(9600);
+  channel->begin(38400);
 }
 
 bool MsgServiceBT::sendMsg(Msg msg){
