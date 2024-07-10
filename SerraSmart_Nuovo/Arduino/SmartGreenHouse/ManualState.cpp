@@ -5,9 +5,7 @@
 #include "MsgServiceBT.h"
 #include <Arduino.h>
 
-
-
-
+//constructor of Manual state
 ManualState::ManualState(Led* ledManual, Led* ledPump, Sonar* proxy, ShareState* pState, ServoPump* Pump){
   this->ledManual = ledManual;
   this->ledPump = ledPump;
@@ -20,6 +18,10 @@ void ManualState::init(int period){
   Task::init(period);
 }
 
+  /* The task ManualState menage the reciving and sending of commands from bluethoot to java server without adding anything, check the distance from sonar and if it is greather than DIST
+  *   the state will change and set it to automatic, if there is a message from serial check the header (with substring separate the header from the data) for the 
+  *   routing of the data (r:send to BT, p:set angle of servo, a:go in automatic).
+  */
 void ManualState::tick(){
   if(pState->isManual()){
     this->ledManual->switchOn();
@@ -44,38 +46,37 @@ void ManualState::tick(){
        String communication = msg->getContent();
        char header;
        String firstMsg;
-       if (communication.length()>0) {
-        //può capitare che in comunicazione tu abbia 2 messaggi, invati da server, per 2 eventi distinti che si sono verificati nello stesso istante, o circa
-        //devi trovare la politica adeguata di troncamento dei messaggi, facendo una ricerca per carattere P o R che differenziano i vari messaggi arrivati da server.
-        String headFirstMessage = communication.substring(0,1);
-        String communicationNoHeader= communication.substring(1);
-        int indexSecondMessage;
-        indexSecondMessage =  communicationNoHeader.indexOf(target1);
-        if(indexSecondMessage == -1){
-          indexSecondMessage = communicationNoHeader.indexOf(target2);
-        }
+       if(communication.length()>0) {
+         String headFirstMessage = communication.substring(0,1);
+         String communicationNoHeader= communication.substring(1);
+         int indexSecondMessage;
+         indexSecondMessage =  communicationNoHeader.indexOf(TARGET1);
+         if(indexSecondMessage == -1){
+            indexSecondMessage = communicationNoHeader.indexOf(TARGET2);
+          }
         if (indexSecondMessage != -1) {
           String secondMsg = communicationNoHeader.substring(indexSecondMessage+1);
           String headSecondMessage = communicationNoHeader.substring(indexSecondMessage,(indexSecondMessage + 1));
           header = headSecondMessage[0];
           switch (header){
-          case HAUTO:
+          case HAUTO://Header that indicates to change currentState to automatic, and switch of led auto and notify the close comand to the BT.
               pState->setAutomatic();
               this->ledManual->switchOff();
               MsgBT.sendMsg(Msg(BTCLOSE));
               break;
-          case HTrace:
+          case HTRACE://Header used to redirect the values comes from serial to the BT module.
               MsgBT.sendMsg(Msg(secondMsg));
               break;
-          case HPumpServo:
+          case HPUMPSERVO://Header used to set the servo to the values comes from serial. 
+          //Mapping this value to the ServoTimer2 libreries servo base values.
               int temp = atoi(secondMsg.c_str());
               temp = map(temp,VAL_START,VAL_STOP,PUMP_CLOSE,PUMP_MAX);
               this->ledPump->setIntensity(temp);
               Pump->setAngle(temp);
-              if(temp == 0){
-                MsgService.sendMsg(ClosePump);
+              if(temp == PUMP_CLOSE){
+                MsgService.sendMsg(CLOSEPUMP);
               }else{
-                MsgService.sendMsg(OpenPump);
+                MsgService.sendMsg(OPENPUMP);
               }
               break;
           }
@@ -92,18 +93,18 @@ void ManualState::tick(){
                 this->ledManual->switchOff();
                 MsgBT.sendMsg(Msg(BTCLOSE));
                 break;
-            case HTrace:
+            case HTRACE:
                 MsgBT.sendMsg(Msg(firstMsg));
                 break;
-            case HPumpServo:
+            case HPUMPSERVO:
                 int temp = atoi(firstMsg.c_str());
                 temp = map(temp,VAL_START,VAL_STOP,PUMP_CLOSE,PUMP_MAX);
                 this->ledPump->setIntensity(temp);
                 Pump->setAngle(temp);
                 if(temp == PUMP_CLOSE){
-                  MsgService.sendMsg(ClosePump);
+                  MsgService.sendMsg(CLOSEPUMP);
                 }else{
-                  MsgService.sendMsg(OpenPump);
+                  MsgService.sendMsg(OPENPUMP);
                 }
                 break;
           }

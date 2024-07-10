@@ -19,7 +19,7 @@ void setup() {
   MsgService.init();
   MsgBT.init();
 
-  ServoPump* Pump = new ServoPump(POMPA);
+  ServoPump* Pump = new ServoPump(PUMP);
   ShareState* pState = new ShareState();
   Sonar* proxy = new Sonar(ECHO, TRIG);
   Led* ledAuto = new Led(LEDa);

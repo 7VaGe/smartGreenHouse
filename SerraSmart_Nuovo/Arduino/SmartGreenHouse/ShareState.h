@@ -1,6 +1,8 @@
 #ifndef __SHARE_STATE__
 #define __SHARE_STATE__
 
+//ShareState manage the translation of the system state from automatic to manual, and from manual to automatic state.
+
 class ShareState {
 
 private:

@@ -2,9 +2,9 @@
 #define __DEFINE__
 
 #define DIST 0.3 //Accensione tramite Sonar (distanza 0,3m)
-#define Umin 30
-#define Pmin 1
-#define Pmid 90
+#define Umin 30 
+#define Pmin 80
+#define Pmid 150
 #define Pmax 255
 #define DeltaU 5
 
@@ -16,7 +16,7 @@
 #define VAL_START 0
 #define VAL_STOP 100
 
-#define POMPA 9
+#define PUMP 9
 #define TRIG 11
 #define ECHO 12
 #define LEDa 7
@@ -28,16 +28,16 @@
 #define HPmin 'c'
 #define HPmed 'd'
 #define HPmax 'e'
-#define HPclose 'f'
-#define HPumpServo 'p'
+#define HPCLOSE 'f'
+#define HPUMPSERVO 'p'
 #define HMANUAL 'm'
 #define HAUTO 'a'
-#define HTrace 'r'
-#define OpenPump "op"
-#define ClosePump "cp"
+#define HTRACE 'r'
+#define OPENPUMP "op"
+#define CLOSEPUMP "cp"
 #define BTCLOSE "z"
 #define BTOPEN "o"
 
-#define target1 'p'
-#define target2 'r'
+#define TARGET1 'p'
+#define TARGET2 'r'
 #endif

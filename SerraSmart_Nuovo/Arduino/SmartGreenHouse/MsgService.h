@@ -29,14 +29,14 @@ public:
   bool msgAvailable;
 
   void init();  
-
-  bool isMsgAvailable();
-  Msg* receiveMsg();
+  
+  bool isMsgAvailable(); //Function used to know if there are something in the serial channel
+  Msg* receiveMsg(); //Function used to store the received message, if the isMsgAvaiable return true. 
 
   bool isMsgAvailable(Pattern& pattern);
   Msg* receiveMsg(Pattern& pattern);
   
-  void sendMsg(const String& msg);
+  void sendMsg(const String& msg); //Sending function to send msg through serial channel
 };
 
 extern MsgServiceClass MsgService;
