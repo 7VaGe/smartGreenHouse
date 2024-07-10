@@ -1,125 +1,268 @@
 <!DOCTYPE html>
-Prima implementazione websocket e richieste AJAX periodiche per ricevere i dati aggiornati.
-
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f0f2f5;
+        }
+        header {
+            background-color: #007bff;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            font-size: 24px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        #external-container {
+            display: flex;
+            justify-content: space-between;
+            height: calc(100% - 50px);
+            margin: 20px;
+            background-color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .data-container-left, .data-container-right {
+            flex: 1;
+            padding: 20px;
+            text-align: center;
+            overflow-y: auto;
+            margin: 10px;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            position: relative; /* Add relative positioning to allow child elements to be positioned absolutely */
+        }
+        .data-container-left {
+            background-color: #e3f2fd;
+        }
+        .data-container-right {
+            background-color: #d1e7dd;
+        }
+        .server {
+            background-color: #ffcccc !important;
+            border: 1px solid #ff0000 !important;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        .bluetooth {
+            background-color: #ccccff !important;
+            border: 1px solid #0000ff !important;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        .default {
+            background-color: white;
+        }
+        .data-block {
+            padding: 15px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            background-color: white;
+        }
+        .data-block-bt {
+            padding: 15px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            background-color: white;
+        }
+        .data-block p {
+            margin: 5px 0;
+        }
+        .fixed-top {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 10; /* Ensure it stays on top of other elements */
+            background-color: #d1e7dd; /* Match the background color */
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+        }
+        .scroll-content {
+            padding-top: 150px; /* Make space for the fixed element */
+        }
+    </style>
     <title>Real-time Data Visualization</title>
 </head>
 <body>
-<div id="data-container"></div>
+<header>Real-time Data Visualization</header>
+<div id="external-container">
+    <div id="data-container-left" class="data-container-left"></div>
+    <div id="data-container-right" class="data-container-right">
+        <div id="supply-state" class="fixed-top"></div>
+        <div id="data-container-bt" class="scroll-content"></div>
+    </div>
+</div>
 
 <script>
-    // Funzione per aggiornare i dati tramite AJAX
+    let previousDataBt = [];
+    const maxBluetoothItems = 5; // Massimo numero di elementi Bluetooth da visualizzare
+
     function fetchData() {
-        // Effettua una richiesta GET al server per ottenere i dati
         fetch('/api/data')
             .then(response => {
-                // Controlla se la risposta è OK (status code 200)
                 if (response.ok) {
-                    // Estrai i dati dalla risposta JSON
                     return response.json();
                 } else {
-                    // Se la risposta non è OK, solleva un errore
                     throw new Error('Network response was not ok.');
                 }
             })
             .then(data => {
-                // Gestisci i dati ricevuti
                 updatePage(data);
             })
             .catch(error => {
-                // Gestisci eventuali errori durante la richiesta AJAX
                 console.error('There was a problem with the fetch operation:', error);
             });
     }
 
-    // Funzione per aggiornare la pagina con i nuovi dati
-    function updatePage(data) {
-        // Qui puoi aggiornare la pagina con i nuovi dati ricevuti dal server
-        // Ad esempio, aggiornare una tabella o una lista con i nuovi dati
-
-        // Esempio: Aggiorna un elemento div con i nuovi dati
-        const dataContainer = document.getElementById('data-container');
-        dataContainer.innerHTML = ''; // Cancella i dati precedenti
-        data.forEach(item => {
-            const newDataHtml = `
-                <p>New Data:</p>
-                <p>Time: ${new Date(item.time).toLocaleString()}</p>
-                <p>Value: ${item.value}</p>
-                <p>Place: ${item.place}</p>
-                <hr>
-            `;
-            dataContainer.innerHTML += newDataHtml;
-        });
-    }
-
-    // Esegui la funzione fetchData per ottenere i dati al caricamento della pagina o ad intervalli regolari
-    document.addEventListener('DOMContentLoaded', function() {
-        // Aggiorna i dati ogni secondo
-        setInterval(fetchData, 1000);
-    });
-</script>
-</body>
-</html>
-<!--
-Seconda implementazione rimuovendo le richieste AJAX periodiche e sfruttando le WebSocket dove in tempo reale consentono l'aggiornamento della mia pagina web.
-
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Real-time Data Visualization</title>
-     Include sockjs-client
-    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.5.1/dist/sockjs.min.js"></script>
-     Include vertx-eventbus-client
-    <script src="https://cdn.jsdelivr.net/npm/vertx3-eventbus-client/vertx-eventbus.min.js"></script>
-</head>
-<body>
-<div id="data-container"></div>
-
-<script>
-    console.log("sockjs-client loaded:", typeof SockJS !== 'undefined');
-    console.log("vertx-eventbus-client loaded:", typeof EventBus !== 'undefined');
-
-    document.addEventListener("DOMContentLoaded", function() {
-        var eb = new EventBus('http://192.168.1.12:8080/eventbus');
-        console.log("sei dentro EVENTBUS: ");
-        eb.onopen = function() {
-            console.log('Connected to EventBus', eb);
-            eb.registerHandler('api/data', function(error, message) {
-                if (error) {
-                    console.error(error);
+    function fetchDataBt() {
+        fetch('/api/bluetooth')
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
                 } else {
-                    console.log('received a message: ' + JSON.stringify(message));
-                    updatePage([message.body]);
+                    throw new Error('Network response was not ok.');
                 }
+            })
+            .then(dataBt => {
+                updatePageBt(dataBt);
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
             });
-        };
-        eb.onerror = function(err) {
-            console.error("EventBus error:", err);
-        };
-    });
+    }
 
-    // Funzione per aggiornare la pagina con i nuovi dati
-    function updatePage(data) {
-    console.log("DATI: ", data);
-        const dataContainer = document.getElementById('data-container');
-        data.forEach(item => {
-            const newDataHtml = `
-                <p>New Data:</p>
-                <p>Time: ${new Date(item.time).toLocaleString()}</p>
-                <p>Value: ${item.value}</p>
-                <p>Place: ${item.place}</p>
+    function fetchSupplyState() {
+        fetch('/api/supplyState')
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error('Network response was not ok.');
+                }
+            })
+            .then(state => {
+                updateState(state);
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
+    }
+
+    function updatePageBt(dataBt) {
+        const dataContainer = document.getElementById('data-container-bt');
+        if (!dataContainer) {
+            console.error('data-container-bt not found');
+            return;
+        }
+        dataContainer.innerHTML = '';
+        // Aggiungi nuovi dati all'inizio dell'area
+        dataBt.forEach(item => {
+            const newDataBlockBt = document.createElement('div');
+            newDataBlockBt.classList.add('data-block-bt');
+            let placeClass = '';
+            if (item.place === 'Bluetooth') {
+                placeClass = 'bluetooth';
+            }
+            if (placeClass) {
+                newDataBlockBt.classList.add(placeClass);
+            }
+
+
+            if (item.supplyTime === "Supply in progress...") {
+                newDataBlockBt.innerHTML = `
+                <p><strong>Value:</strong> ${item.value}</p>
+                <p><strong>Supply duration:</strong><br> ${item.supplyTime}</p>
+                <p><strong>Time:</strong> ${new Date(item.time).toLocaleString()}</p>
+                <p><strong>Place:</strong> ${item.place}</p>
                 <hr>
             `;
-            dataContainer.innerHTML += newDataHtml;
+            } else if (item.value === 0.0) {
+                newDataBlockBt.innerHTML = `
+                <p><strong>Supply:</strong><br> ${item.supplyTime}</p>
+                <p><strong>Time:</strong> ${new Date(item.time).toLocaleString()}</p>
+                <p><strong>Place:</strong> ${item.place}</p>
+                <hr>
+            `;
+            }else{
+                newDataBlockBt.innerHTML = `
+                <p><strong>Value:</strong> ${item.value}</p>
+                <p><strong>Supply duration:</strong><br> ${item.supplyTime.toFixed(2)} seconds</p>
+                <p><strong>Time:</strong> ${new Date(item.time).toLocaleString()}</p>
+                <p><strong>Place:</strong> ${item.place}</p>
+                <hr>
+            `;
+            }
+            dataContainer.insertBefore(newDataBlockBt, dataContainer.firstChild); // Inserisci all'inizio
+        });
+        // Aggiorna previousDataBt mantenendo solo i primi maxBluetoothItems elementi
+        previousDataBt = dataBt.concat(previousDataBt).slice(0, maxBluetoothItems);
+    }
+
+
+    function updateState(state) {
+        const supplyStateContainer = document.getElementById('supply-state');
+        supplyStateContainer.innerHTML = ''; // Clear previous content
+        const newDataBlock = document.createElement('div');
+        newDataBlock.classList.add('data-block');
+        if (state.state === "Pump is Open") {
+            newDataBlock.innerHTML = `
+                <p><strong>Supply state:</strong><br> ${state.state}</p>
+                <hr>
+            `;
+        } else {
+            newDataBlock.innerHTML = `
+                <p><strong>Supply state:</strong><br>${state.state}</p>
+                <p><strong>Supply duration:</strong><br> ${state.supplyTime} seconds</p>
+                <hr>
+            `;
+        }
+        supplyStateContainer.appendChild(newDataBlock);
+    }
+
+    function updatePage(data) {
+        const dataContainer = document.getElementById('data-container-left');
+        dataContainer.innerHTML = ''; // Clear previous content
+        data.forEach(item => {
+            const newDataBlock = document.createElement('div');
+            newDataBlock.classList.add('data-block');
+            newDataBlock.dataset.time = item.time;
+            let placeClass = '';
+            if (item.place === 'Server') {
+                placeClass = 'server';
+            }
+            if (placeClass) {
+                newDataBlock.classList.add(placeClass);
+            }
+            newDataBlock.innerHTML = `
+                <p><strong>New Data</strong></p>
+                <p><strong>Time:</strong> ${new Date(item.time).toLocaleString()}</p>
+                <p><strong>Value:</strong> ${item.value}</p>
+                <p><strong>Place:</strong> ${item.place}</p>
+                <hr>
+            `;
+            dataContainer.appendChild(newDataBlock);
         });
     }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        setInterval(fetchData, 1000);
+        setInterval(fetchSupplyState, 500);
+        setInterval(fetchDataBt, 1000);
+    });
 </script>
 </body>
 </html>
--->
