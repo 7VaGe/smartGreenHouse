@@ -11,6 +11,10 @@ public class MsgService extends Observable{
         this.rate = rate;
     }
 
+    /**
+     * Initialize the channel passing the right port and baud rate
+     *
+     */
     void init(){
         try {
             channel = new SerialCommChannel(port, rate);
@@ -34,6 +38,11 @@ public class MsgService extends Observable{
         }).start();
 
     }
+    /**
+     * Send message on a created channel
+     *
+     * @param msg message to send
+     * */
 
     public void sendMsg(String msg) {
         channel.sendMsg(msg);

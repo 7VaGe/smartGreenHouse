@@ -3,20 +3,25 @@ package org.example;
 public class MsgEventFromSerial implements Event {
 
     private String msg;
-    private char header;
 
     public MsgEventFromSerial(String msg){
         this.msg = msg;
     }
-
+    /**
+     * Getter for return the message from an MsgEventFromSerial
+     *
+     * @return message event
+     * */
     public String getMsg(){
         return msg;
     }
 
-    //qui puoi inserire il fatto degli header se vuoi cambiare stato con un getHeader passando il messaggionper intero.
+    /**
+     * Getter for return the message header from an MsgEventFromWifi
+     *
+     * @return header of message event
+     * */
     public char getHeader(String msg) {
-        /*byte[] array = msg.getBytes();
-        header = (char) array[0];*/
-        return header =  msg.charAt(0);
+        return msg.charAt(0);
     }
 }

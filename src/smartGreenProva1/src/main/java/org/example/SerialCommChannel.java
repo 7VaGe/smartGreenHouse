@@ -11,10 +11,14 @@ public class SerialCommChannel implements CommChannel, SerialPortEventListener {
     private SerialPort serialPort;
     private BlockingQueue<String> queue;
     private StringBuffer currentMsg = new StringBuffer("");
-    private static final char BT_MESSAGES_ID = 'B';
-    private static final char _MESSAGES_ID = 'S';
 
-
+    /**
+     * Creates a SerialCommChannel channel passing the port number and baud rate, try to configure the Serial Channel, passing
+     * all the specifics settings, then try to open port.
+     *
+     * @param port the Serial Channel port number
+     * @param rate the Serial Channel baud rate
+     * */
     public SerialCommChannel(String port, int rate) throws Exception {
         queue = new ArrayBlockingQueue<>(100);
         serialPort = new SerialPort(port);
@@ -34,10 +38,14 @@ public class SerialCommChannel implements CommChannel, SerialPortEventListener {
             System.out.println("There are an error on writing string to port т: " + ex);
         }
     }
-
+    /**
+     * Notify all the serial event coming at the Serial Channel, checking their payload, and cutting the end of payload using a specific end character.
+     * the result is a clear msg event, without special characters.
+     *
+     * @param serialPortEvent the serial port event notified
+     * */
         @Override
         public void serialEvent (SerialPortEvent serialPortEvent){
-            /* if there are bytes received in the input buffer */
             if (serialPortEvent.isRXCHAR()) {
                 try {
                     String msg = serialPort.readString(serialPortEvent.getEventValue());
@@ -63,7 +71,12 @@ public class SerialCommChannel implements CommChannel, SerialPortEventListener {
                 }
             }
         }
-
+        /**
+         * Sending message through the Serial Channel adding the special character of newline \n, this character is used to the endpoint to
+         * know where the payload ends, and extrapolate the right message event.
+         *
+         * @param msg the message to sent through Serial Channel
+         * */
         @Override
         public void sendMsg (String msg){
             char[] array = (msg+"\n").toCharArray();
@@ -73,19 +86,27 @@ public class SerialCommChannel implements CommChannel, SerialPortEventListener {
             }
             try {
                 synchronized (serialPort) {
-                    System.out.println("[SERIAL] | Invio: "+ (Arrays.toString(bytes)));
+                    //System.out.println("[SERIAL] | Invio: "+ (Arrays.toString(bytes)));
                     serialPort.writeBytes(bytes);
                 }
             } catch(Exception ex){
                 ex.printStackTrace();
             }
         }
-
+    /**
+     * Receive function used to pick the head of a Blocking Queue, in this position there is last event comes through Serial Channel
+     *
+     * @return the head element of queue
+     * */
         @Override
         public String receiveMsg () throws InterruptedException {
             return queue.take();
         }
-
+    /**
+     * Checking fucntion used to monitoring the Serial Channel
+     *
+     * @return true if there is some element in the queue
+     * */
         @Override
         public boolean isMsgAvaiable () {
             return !queue.isEmpty();

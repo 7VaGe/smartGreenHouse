@@ -10,15 +10,21 @@ public class MsgEventFromWifi implements Event {
     public MsgEventFromWifi(String msg){
         this.msg = msg;
     }
-
+    /**
+     * Getter for return the message from an MsgEventFromWifi
+     *
+     * @return message event
+     * */
     public String getMsg(){
         return msg;
     }
 
-
+    /**
+     * Getter for return the header of an MsgEventFromWifi
+     *
+     * @return header of message event
+     * */
     public char getHeader(String msg) {
-        /*byte[] array = msg.getBytes();
-        header = (char) array[0];*/
         return header =  msg.charAt(0);
     }
 }
