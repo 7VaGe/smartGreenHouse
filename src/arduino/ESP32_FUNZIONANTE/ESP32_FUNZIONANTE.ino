@@ -47,7 +47,7 @@ void loop() {
    
    /* send data */
    Serial.print("sending "+String(value)+"...");    
-   int code = sendData(address, value, "home");
+   int code = sendData(address, value, "ESP");
    
    Serial.println();
    /* log result */
