@@ -12,7 +12,7 @@
 #define CAPACITY_MED 1600
 #define CAPACITY_MAX 2250
 #define PUMP_MAX 2250
-#define PUMP_CLOSE 7500
+#define PUMP_CLOSE 750
 #define VAL_START 0
 #define VAL_STOP 100
 
@@ -28,16 +28,16 @@
 #define HPmin 'c'
 #define HPmed 'd'
 #define HPmax 'e'
-#define HPCLOSE 'f'
-#define HPUMPSERVO 'p'
+#define HPclose 'f'
+#define HPumpServo 'p'
 #define HMANUAL 'm'
 #define HAUTO 'a'
-#define HTRACE 'r'
-#define OPENPUMP "op"
-#define CLOSEPUMP "cp"
+#define HTrace 'r'
+#define OpenPump "op"
+#define ClosePump "cp"
 #define BTCLOSE "z"
 #define BTOPEN "o"
 
-#define TARGET1 'p'
-#define TARGET2 'r'
+#define target1 'p'
+#define target2 'r'
 #endif

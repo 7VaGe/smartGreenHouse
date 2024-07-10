@@ -1,7 +1,5 @@
 #include "Scheduler.h"
 
-//
-
 void Scheduler::init(int basePeriod){
   this->basePeriod = basePeriod;
   timer.setupPeriod(basePeriod);  
@@ -26,3 +24,4 @@ void Scheduler::schedule(){
     }
   }
 }
+
