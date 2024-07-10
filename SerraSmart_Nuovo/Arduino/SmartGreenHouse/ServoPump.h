@@ -3,6 +3,7 @@
 
 #include "ServoTimer2.h"
 
+//class for use the Servo motor 
 class ServoPump{
   public:
     ServoPump(int pin);
