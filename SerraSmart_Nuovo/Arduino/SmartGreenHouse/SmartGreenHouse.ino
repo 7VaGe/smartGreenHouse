@@ -2,8 +2,8 @@
 #include "SoftwareSerial.h"
 #include "Sonar.h"
 #include "Led.h"
-#include "Define.h"
-#include "Automatic.h"
+#include "define.h"
+#include "AutomaticState.h"
 #include "ManualState.h"
 #include "Scheduler.h"
 #include "ShareState.h"
@@ -26,7 +26,7 @@ void setup() {
   Led* ledManual = new Led(LEDm);
   Led* ledPump = new Led(LEDp);
 
-  Task* t0 = new Automatic(ledAuto, ledPump, proxy, pState, Pump);
+  Task* t0 = new AutomaticState(ledAuto, ledPump, proxy, pState, Pump);
   t0->init(50);
   sched.addTask(t0);
  

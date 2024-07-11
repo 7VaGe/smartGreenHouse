@@ -1,4 +1,4 @@
-#include "Automatic.h"
+#include "AutomaticState.h"
 #include "define.h"
 #include "MsgService.h"
 #include "Sonar.h"
@@ -6,7 +6,7 @@
 
 
 
-Automatic::Automatic(Led* ledAuto, Led* ledPump, Sonar* proxy, ShareState* pState, ServoPump* Pump){
+AutomaticState::AutomaticState(Led* ledAuto, Led* ledPump, Sonar* proxy, ShareState* pState, ServoPump* Pump){
   this->ledAuto = ledAuto;
   this->ledPump = ledPump;
   this->proxy = proxy;
@@ -14,7 +14,7 @@ Automatic::Automatic(Led* ledAuto, Led* ledPump, Sonar* proxy, ShareState* pStat
   this->Pump = Pump;
 }
 
-void Automatic::init(int period){
+void AutomaticState::init(int period){
   Task::init(period);
 }
 
@@ -22,7 +22,7 @@ void Automatic::init(int period){
   * otherwise if the distance is fewer the DIST it will send the request to change the application state,
   * if there is a messagge incoming from serial it separate the first character of the messagge and use it as a header to set the servo angle, or change the state of the system to manual.
 */
-void Automatic::tick(){
+void AutomaticState::tick(){
   if(pState->isAutomatic()){
     ledAuto->switchOn();
     if(MsgBT.isMsgAvailable()){

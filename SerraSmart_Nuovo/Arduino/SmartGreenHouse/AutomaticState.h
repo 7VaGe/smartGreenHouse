@@ -1,5 +1,5 @@
-#ifndef __AUTOMATIC__
-#define __AUTOMATIC__
+#ifndef __AUTOMATICSTATE__
+#define __AUTOMATICSTATE__
 
 #include "Task.h"
 #include "Led.h"
@@ -8,7 +8,7 @@
 #include "ShareState.h"
 #include "ServoPump.h"
 
-class Automatic:public Task{
+class AutomaticState:public Task{
 
 public:
   Led* ledAuto;
@@ -25,7 +25,7 @@ public:
     * @param pState current pump state
     * @param Pump servo module that simulate a smarth green house.
     */
-  Automatic(Led* ledAuto, Led* ledPump, Sonar* proxy, ShareState* pState, ServoPump* Pump); 
+  AutomaticState(Led* ledAuto, Led* ledPump, Sonar* proxy, ShareState* pState, ServoPump* Pump); 
   /*
     * Timer period, passed to the scheduler to perform task
     *
