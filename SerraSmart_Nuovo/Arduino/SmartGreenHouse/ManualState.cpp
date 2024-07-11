@@ -5,6 +5,7 @@
 #include "MsgServiceBT.h"
 #include <Arduino.h>
 
+
 //constructor of Manual state
 ManualState::ManualState(Led* ledManual, Led* ledPump, Sonar* proxy, ShareState* pState, ServoPump* Pump){
   this->ledManual = ledManual;
@@ -74,13 +75,14 @@ void ManualState::tick(){
           //Mapping this value to the ServoTimer2 libreries servo base values.
               int temp = atoi(secondMsg.c_str());
               temp = map(temp,VAL_START,VAL_STOP,PUMP_CLOSE,PUMP_MAX);
-              this->ledPump->setIntensity(temp);
               Pump->setAngle(temp);
               if(temp == PUMP_CLOSE){
                 MsgService.sendMsg(CLOSEPUMP);
               }else{
                 MsgService.sendMsg(OPENPUMP);
               }
+              temp = map(temp,PUMP_CLOSE,PUMP_MAX,0,255);
+                this->ledPump->setIntensity(temp);
               break;
           }
         }
@@ -101,14 +103,15 @@ void ManualState::tick(){
                 break;
             case HPUMPSERVO:
                 int temp = atoi(firstMsg.c_str());
-                temp = map(temp,VAL_START,VAL_STOP,PUMP_CLOSE,PUMP_MAX);
-                this->ledPump->setIntensity(temp);
+                temp = map(temp,VAL_START,VAL_STOP,PUMP_CLOSE,PUMP_MAX);       
                 Pump->setAngle(temp);
                 if(temp == PUMP_CLOSE){
                   MsgService.sendMsg(CLOSEPUMP);
                 }else{
                   MsgService.sendMsg(OPENPUMP);
                 }
+                temp = map(temp,PUMP_CLOSE,PUMP_MAX,0,255);
+                this->ledPump->setIntensity(temp);
                 break;
           }
       }else {

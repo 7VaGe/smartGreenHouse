@@ -36,7 +36,7 @@ public:
     * Task operation explained on manual.cpp file 
     */
   void tick();
-  
+
   
 };
 
