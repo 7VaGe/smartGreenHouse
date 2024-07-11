@@ -5,7 +5,7 @@
 /* wifi network name */
 const char* ssidName = "TIM-30946425"; //aggiunto const
 /* WPA2 PSK password */
- const char* pwd = "CasaCiarafoni00."; //aggiunto const
+ const char* pwd = "inserisci la password"; //aggiunto const
 /* service IP address */ 
 char* address = "http://192.168.1.12:8080"; //controllare e cambiare in base a che dice la console di eclipse.
 const int potPin =34;
