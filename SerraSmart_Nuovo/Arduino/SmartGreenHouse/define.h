@@ -40,4 +40,5 @@
 
 #define TARGET1 'p'
 #define TARGET2 'r'
+#define TARGET3 'a'
 #endif

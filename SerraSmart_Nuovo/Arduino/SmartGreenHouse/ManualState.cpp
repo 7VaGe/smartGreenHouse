@@ -53,6 +53,9 @@ void ManualState::tick(){
          indexSecondMessage =  communicationNoHeader.indexOf(TARGET1);
          if(indexSecondMessage == -1){
             indexSecondMessage = communicationNoHeader.indexOf(TARGET2);
+            if(indexSecondMessage == -1){
+              indexSecondMessage = communicationNoHeader.indexOf(TARGET3);
+            }
           }
         if (indexSecondMessage != -1) {
           String secondMsg = communicationNoHeader.substring(indexSecondMessage+1);

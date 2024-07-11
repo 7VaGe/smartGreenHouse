@@ -52,7 +52,7 @@ void AutomaticState::tick(){
             pState->setManual();
             this->ledAuto->switchOff();
             break;
-          case HPCLOSE: //Header that indicates Pump close, and sto supply water
+          case HPCLOSE: //Header that indicates Pump close, and stop the water supply
             this->ledPump->switchOff();
             Pump->closePump();
             MsgService.sendMsg(CLOSEPUMP);
